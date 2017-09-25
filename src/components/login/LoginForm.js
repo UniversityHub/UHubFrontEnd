@@ -1,14 +1,28 @@
 import React, { Component } from 'react';
+import classNames from 'classnames';
 
 export default class MyComponent extends Component {
 
   state = {
     user: '',
-    password: ''
+    password: '',
+    submitted: false
+  }
+
+  componentWillMount () {
+    if(localStorage.getItem('loginSubmit')) {
+      let newState = localStorage.getItem('loginSubmit');
+      this.setState(JSON.parse(newState));
+    }
+  }
+
+  store = () => {
+    let newState = this.state;
+    localStorage.setItem('loginSubmit', JSON.stringify(newState));
   }
 
   handleSubmit = () => {
-    alert('you have submitted')
+    this.setState({ submitted : !this.state.submitted }, ()=>this.store())
   }
 
   handleUserChange = (event) => {
@@ -20,16 +34,28 @@ export default class MyComponent extends Component {
   }
 
   render() {
+    var usrInput = classNames({
+      'form-group': true,
+      'has-success': this.state.submitted && this.state.user,
+      'has-error': this.state.submitted && !this.state.user,
+    });
+
+    var passwordInput = classNames({
+      'form-group': true,
+      'has-success': this.state.submitted && this.state.password,
+      'has-error': this.state.submitted && !this.state.password,
+    });
+
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
-          <div className="form-group">
+          <div className={usrInput}>
             <label>
               Username:
             </label>
-            <input type='email' value={this.state.user} className="form-control" placeholder="Username" onChange={this.handleUserChange}/>
+            <input value={this.state.user} className="form-control" placeholder="Username" onChange={this.handleUserChange}/>
           </div>
-          <div className="form-group">
+          <div className={passwordInput}>
             <label>
               Password
             </label>
