@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames';
+import '../../assets/scss/_LoginForm.scss'
 
 export default class MyComponent extends Component {
 
@@ -10,15 +12,15 @@ export default class MyComponent extends Component {
   }
 
   componentWillMount () {
-    if(localStorage.getItem('loginSubmit')) {
-      let newState = localStorage.getItem('loginSubmit');
+    if(sessionStorage.getItem('loginSubmit')) {
+      let newState = sessionStorage.getItem('loginSubmit');
       this.setState(JSON.parse(newState));
     }
   }
 
   store = () => {
     let newState = this.state;
-    localStorage.setItem('loginSubmit', JSON.stringify(newState));
+    sessionStorage.setItem('loginSubmit', JSON.stringify(newState));
   }
 
   handleSubmit = () => {
@@ -43,23 +45,26 @@ export default class MyComponent extends Component {
     var passwordInput = classNames({
       'form-group': true,
       'has-success': this.state.submitted && this.state.password,
-      'has-error': this.state.submitted && !this.state.password,
+      'has-error': this.state.submitted && !this.state.password5,
     });
 
     return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
+      <div className='container'>
+        <div>
+          <h1 className='text-center'>UHUB</h1>
+        </div>
+        <form onSubmit={this.handleSubmit} className="col-md-6 col-md-offset-3">
           <div className={usrInput}>
-            <label>
-              Username:
-            </label>
-            <input value={this.state.user} className="form-control" placeholder="Username" onChange={this.handleUserChange}/>
+            <div className='input-group'>
+              <span className="input-group-addon"><span className="glyphicon glyphicon-user"/></span>
+              <input type='email' value={this.state.user} className="form-control" placeholder="Username" onChange={this.handleUserChange}/>
+            </div>
           </div>
           <div className={passwordInput}>
-            <label>
-              Password
-            </label>
-            <input type='password' value={this.state.password} className="form-control" placeholder="Password" onChange={this.handlePasswordChange}/>
+            <div className='input-group'>
+              <span className="input-group-addon"><span className="glyphicon glyphicon-lock"/></span>
+              <input type='password' value={this.state.password} className="form-control" placeholder="Password" onChange={this.handlePasswordChange}/>
+            </div>
           </div>
           <div className='checkbox'>
             <label>
@@ -67,9 +72,25 @@ export default class MyComponent extends Component {
               Stay Logged In
             </label>
           </div>
-          <button type="submit" className="btn btn-default" >
-            Submit
-          </button>
+          <div className='container-fluid row'>
+            <Link to='/main' className="container-fluid">
+              <button type="submit" className="btn btn-primary btn-block" >
+                Submit
+              </button>
+            </Link>
+          </div>
+          <div className='container-fluid row'>
+            <Link to='/' className=''>
+              <button type="submit" className="btn btn-default col-md-5" >
+                Forgot Pasword
+              </button>
+            </Link>
+            <Link to='/signup' className="">
+              <button type="link" className="btn btn-default col-md-5 col-md-offset-2" >
+                Sign Up
+              </button>
+            </Link>
+          </div>
         </form>
       </div>
     );

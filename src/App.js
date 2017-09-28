@@ -5,16 +5,15 @@ import { renderRoutes } from 'react-router-config';
 import routes from './routes';
 import LoginForm from './components/login/LoginForm';
 import logo from './logo.svg';
-import './App.css';
+import './assets/scss/_App.css';
 
 class App extends Component {
   render() {
     return (
-      <div className='container'>
+      <div className='main'>
         <BrowserRouter>
             {renderRoutes(routes)}
         </BrowserRouter>
-        {/* <LoginForm /> */}
       </div>
     );
   }

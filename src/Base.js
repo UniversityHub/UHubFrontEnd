@@ -3,7 +3,7 @@ import { renderRoutes } from 'react-router-config';
 import { func, shape, arrayOf, string, bool } from 'prop-types';
 
 const Base = ({ route }) => (
-  <div>
+  <div style={{height: '100vh'}}>
     {renderRoutes(route.routes)}
   </div>
 );
