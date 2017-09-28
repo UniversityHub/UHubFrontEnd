@@ -10,7 +10,6 @@ class SignUp extends Component {
     email: '',
     password: '',
     passwordRepeat: '',
-    school: '',
     submitted: false,
   }
 
@@ -19,8 +18,22 @@ class SignUp extends Component {
     this.addUserService = new UserInfoService();
   }
 
+  validate = () => {
+    const { user, password, passwordRepeat } = this.state;
+
+    if(user.length < 6 || user.length > 32) return 1;
+    else if(password !== passwordRepeat) return 1;
+    else return 0;
+
+  }
+
   handleSubmit = () => {
-    this.addUserService.sendData(this.state.user, this.state.password);
+    const validated = this.validate();
+    if(validated) {
+      console.log('we not validated')
+      return;
+    }
+    //this.addUserService.sendData(this.state.user, this.state.password);
     console.log(this.state.user);
     console.log(this.state.password);
   }
@@ -49,7 +62,7 @@ class SignUp extends Component {
   }
 
   render() {
-    
+
     return (
       <div className='container-fluid'>
         <div className='container'>
@@ -84,7 +97,7 @@ class SignUp extends Component {
           </div>
           <div className='container-fluid row'>
             {/* <Link to='/login'> */}
-              <button type="submit" className="btn btn-default col-md-12" >
+              <button className="btn btn-default col-md-12" >
                 Submit
               </button>
             {/* </Link> */}
