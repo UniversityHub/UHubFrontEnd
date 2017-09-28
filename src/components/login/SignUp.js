@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../../assets/scss/_SignUp.scss';
 import { Link } from 'react-router-dom';
 import UserInfoService from '../UserInfoService';
+import classNames from 'classnames';
 
 class SignUp extends Component {
 
@@ -20,20 +21,36 @@ class SignUp extends Component {
 
   validate = () => {
     const { user, password, passwordRepeat } = this.state;
+    const specChar = /[!@#$%^&*]/g;
+    const num = /[0-9]/g
 
-    if(user.length < 6 || user.length > 32) return 1;
-    else if(password !== passwordRepeat) return 1;
-    else return 0;
-
+    if(user.length < 6 || user.length > 32) {
+      alert('Username must be greater than 6 characters AND less than 32 characters!');
+      return 1;
+    } else if(password.length < 6 || password.length > 32) {
+      alert('Username must be greater than 6 characters AND less than 32 characters!');
+      return 1;
+    } else if(password !== passwordRepeat) {
+      alert('Your passwords MUST match!');
+      return 1;
+    } else if(!password.search(specChar) || !password.search(num)) {
+      alert('Your passwords MUST contain at least ONE special character or ONE num!');
+      return 1;
+    }
+    return 0;
   }
 
-  handleSubmit = () => {
+  handleSubmit = (event) => {
+
     const validated = this.validate();
     if(validated) {
+      event.preventDefault();
       console.log('we not validated')
       return;
     }
-    //this.addUserService.sendData(this.state.user, this.state.password);
+
+    this.addUserService.sendData(this.state.user, this.state.password);
+    this.props.history.push('/')
     console.log(this.state.user);
     console.log(this.state.password);
   }

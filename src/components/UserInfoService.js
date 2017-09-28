@@ -14,7 +14,7 @@ class ItemService {
   //   axios.post('http://localhost:4200/UserInfos/update/'+id, {
   //     item: data
   //   })
-  //   .then(res => this.setState({ UserInfos: res.data }))
+  //   .then(res => this.setState({ userInfos: res.data }))
   //   .catch(err => console.log(err))
   // }
   //
