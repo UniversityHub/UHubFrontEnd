@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../../assets/scss/_SignUp.scss';
 import { Link } from 'react-router-dom';
+import UserInfoService from '../UserInfoService';
 
 class SignUp extends Component {
 
@@ -11,6 +12,17 @@ class SignUp extends Component {
     passwordRepeat: '',
     school: '',
     submitted: false,
+  }
+
+  constructor(props) {
+    super(props);
+    this.addUserService = new UserInfoService();
+  }
+
+  handleSubmit = () => {
+    this.addUserService.sendData(this.state.user, this.state.password);
+    console.log(this.state.user);
+    console.log(this.state.password);
   }
 
   handleChange = (value, event) => {
@@ -37,10 +49,7 @@ class SignUp extends Component {
   }
 
   render() {
-    console.log('this.state.user: ' + this.state.user);
-    console.log('this.state.email: ' + this.state.email);
-    console.log('this.state.password: ' + this.state.password);
-    console.log('this.state.passwordRepeat: ' + this.state.passwordRepeat);
+    
     return (
       <div className='container-fluid'>
         <div className='container'>
@@ -74,11 +83,11 @@ class SignUp extends Component {
             </div>
           </div>
           <div className='container-fluid row'>
-            <Link to='/login'>
+            {/* <Link to='/login'> */}
               <button type="submit" className="btn btn-default col-md-12" >
                 Submit
               </button>
-            </Link>
+            {/* </Link> */}
           </div>
         </form>
       </div>
