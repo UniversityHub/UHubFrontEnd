@@ -28,13 +28,13 @@ class SignUp extends Component {
       alert('Username must be greater than 6 characters AND less than 32 characters!');
       return 1;
     } else if(password.length < 6 || password.length > 32) {
-      alert('Username must be greater than 6 characters AND less than 32 characters!');
+      alert('Password must be greater than 6 characters AND less than 32 characters!');
       return 1;
     } else if(password !== passwordRepeat) {
       alert('Your passwords MUST match!');
       return 1;
     } else if(!password.search(specChar) || !password.search(num)) {
-      alert('Your passwords MUST contain at least ONE special character or ONE num!');
+      alert('Your password MUST contain at least ONE special character or ONE num!');
       return 1;
     }
     return 0;
