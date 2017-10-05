@@ -1,98 +1,39 @@
 import React, { Component } from 'react';
-import '../../assets/scss/_SignUp.scss';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import UserInfoService from '../UserInfoService';
-import ToDoListService from '../ToDoListService';
-import classNames from 'classnames';
 
-class SignUp extends Component {
+class ForgotPassword extends Component {
 
   state = {
     user: '',
     email: '',
     password: '',
     passwordRepeat: '',
-    submitted: false,
   }
 
   constructor(props) {
     super(props);
     this.addUserService = new UserInfoService();
-    this.addTodoListService = new ToDoListService();
   }
 
-  checkUser = (user) => {
-    return axios.post('http://localhost:4200/UserInfos/check-user', {
+  authenticateData = (user, email) => {
+    return axios.post('http://localhost:4200/UserInfos/authenticate-email', {
       userID: user,
-    })
-    .then(res => {
-      console.log('within user check');
-      if(res.data.length) {
-        alert('Username already taken!');
-      }else {
-        this.checkEmail(this.state.email);
-      }
-    })
-    .catch(err => console.log(err));
-  }
-
-  checkEmail = (email) => {
-    return axios.post('http://localhost:4200/UserInfos/check-email', {
       userEmail: email
     })
     .then(res => {
+      console.log('have we attempted to authenticate?')
       if(res.data.length) {
-        alert('Email already taken!');
-      }else {
-        this.addUserService.sendData(this.state.email, this.state.user, this.state.password);
-        console.log('user data sent');
-        this.addTodoListService.initialize(this.state.user);
-        console.log('todo list data sent');
+        alert('It worked?');
+        this.addUserService.revisePassword(user, this.state.password);
+        this.addUserService.sendEmail(email, this.state.password);
         this.props.history.push('/login');
+      }else {
+        alert('Wrong Email and/or User!');
       }
     })
     .catch(err => console.log(err));
   }
-
-  validate = () => {
-    const { user, password, passwordRepeat } = this.state;
-    const specChar = /[!@#$%^&*]/g;
-    const num = /[0-9]/g
-
-    if(user.length < 6 || user.length > 32) {
-      alert('Username must be greater than 6 characters AND less than 32 characters!');
-      return 1;
-    } else if(password.length < 6 || password.length > 32) {
-      alert('Password must be greater than 6 characters AND less than 32 characters!');
-      return 1;
-    } else if(password !== passwordRepeat) {
-      alert('Your passwords MUST match!');
-      return 1;
-    } else if(!password.search(specChar) || !password.search(num)) {
-      alert('Your password MUST contain at least ONE special character or ONE num!');
-      return 1;
-    }
-    return 0;
-  }
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-    const validated = this.validate();
-    if(validated) {
-      event.preventDefault();
-      console.log('we not validated')
-      return;
-    }
-
-    this.checkUser(this.state.user);
-  }
-
-  // handleChange = (value, event) => {
-  //   this.setState({
-  //     [event.target.id]: value,
-  //   });
-  // }
 
   handleEmailChange = (event) => {
     this.setState({ email : event.target.value })
@@ -110,12 +51,36 @@ class SignUp extends Component {
     this.setState({ passwordRepeat : event.target.value })
   }
 
-  render() {
+  handleSubmit = (event) => {
+    const validated = this.validate();
+    if(validated) {
+      event.preventDefault();
+      console.log('we not validated')
+      return;
+    }
+    this.authenticateData(this.state.user, this.state.email);
+  }
 
+  validate = () => {
+    const { user, password, passwordRepeat } = this.state;
+    const specChar = /[!@#$%^&*]/g;
+    const num = /[0-9]/g
+
+    if(password.length < 6 || password.length > 32) {
+      alert('New Password must be greater than 6 characters AND less than 32 characters!');
+      return 1;
+    } else if(password !== passwordRepeat) {
+      alert('Your passwords MUST match!');
+      return 1;
+    }
+    return 0;
+  }
+
+  render() {
     return (
       <div className='container-fluid'>
         <div className='container'>
-          <h1 className='text-center'>Sign Up!</h1>
+          <h1 className='text-center'>Forgot Password</h1>
         </div>
         <form onSubmit={this.handleSubmit} className='col-md-10 col-md-offset-1'>
           <div className='form-group'>
@@ -133,13 +98,13 @@ class SignUp extends Component {
           <div className='row containter-fluid'>
             <div className='form-group col-md-6'>
               <label>
-                Password
+                New Password
               </label>
               <input type='password' id='password' value={this.state.password} className="form-control" placeholder="Password" onChange={this.handlePasswordChange}/>
             </div>
             <div className='form-group col-md-6'>
               <label>
-                Confirm Password
+                Confirm New Password
               </label>
               <input type='password' value={this.state.passwordRepeat} className="form-control" placeholder="Confirm Password" onChange={this.handlePasswordRepeatChange}/>
             </div>
@@ -155,6 +120,7 @@ class SignUp extends Component {
       </div>
     )
   }
+
 }
 
-export default SignUp;
+export default ForgotPassword

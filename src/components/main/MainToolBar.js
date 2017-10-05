@@ -13,7 +13,7 @@ class MainToolBar extends Component {
         <button type="button" className="list-group-item row sidebar-item">
           <img src={home_icon} className='sidebar-item-icon'/>
         </button>
-        <button type="button" className="list-group-item row sidebar-item">
+        <button type="button" onClick={this.props.handleClick} className="list-group-item row sidebar-item">
           <img src={calendar_icon} className='sidebar-item-icon'/>
         </button>
         <button type="button" className="list-group-item row sidebar-item">

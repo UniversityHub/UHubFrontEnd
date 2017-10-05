@@ -18,20 +18,17 @@ export default class MyComponent extends Component {
     this.addUserService = new UserInfoService();
   }
 
-  store = () => {
-    let newState = this.state;
-    sessionStorage.setItem('loginSubmit', JSON.stringify(newState));
-  }
-
   authenticateData = (user, pass) => {
-    var item = false
-    return axios.post('http://localhost:4200/UserInfos/sendLogin', {
+    return axios.post('http://localhost:4200/UserInfos/authenticate-password', {
       userID: user,
       userPassword: pass
     })
     .then(res => {
       if(res.data.length) {
-        this.props.history.push('/main');
+        this.props.history.push({
+          pathname: '/main',
+          state: {user: this.state.user},
+        });
       }else {
         alert('Wrong User and/or Password!');
       }
@@ -98,7 +95,7 @@ export default class MyComponent extends Component {
             {/* </Link> */}
           </div>
           <div className='container-fluid row'>
-            <Link to='/' className=''>
+            <Link to='/forgot-password' className=''>
               <button type="submit" className="btn btn-default col-md-5" >
                 Forgot Pasword
               </button>

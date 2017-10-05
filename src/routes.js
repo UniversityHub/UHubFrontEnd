@@ -2,6 +2,7 @@ import Base from './Base';
 import LandingPage from './components/landing/LandingPage';
 import LoginForm from './components/login/LoginForm';
 import SignUp from './components/login/SignUp';
+import ForgotPassword from './components/login/ForgotPassword';
 import MainPage from './components/main/MainPage';
 
 export default [
@@ -24,6 +25,12 @@ export default [
         path: '/signup',
         exact: true,
         component: SignUp,
+        name: "LoginForm"
+      },
+      {
+        path: '/forgot-password',
+        exact: true,
+        component: ForgotPassword,
         name: "LoginForm"
       },
       {
