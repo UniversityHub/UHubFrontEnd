@@ -27,7 +27,10 @@ export default class MyComponent extends Component {
       if(res.data.length) {
         this.props.history.push({
           pathname: '/main',
-          state: {user: this.state.user},
+          state: {
+            user: this.state.user,
+            password: this.state.password,
+          },
         });
       }else {
         alert('Wrong User and/or Password!');
@@ -39,7 +42,6 @@ export default class MyComponent extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     this.authenticateData(this.state.user, this.state.password);
-
   }
 
   handleUserChange = (event) => {

@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import SelectBar from 'react-select';
-import piazza from 'piazza-api';
-import axios from 'axios';
+//import piazza from 'piazza-api';
+//import axios from 'axios';
 import PiazzaService from '../PiazzaService';
 import ReactTable from 'react-table';
-
-const user = 'cconcep@purdue.edu';
-const pass = 'republica1';
-
 class Resource extends Component {
 
   // this.state object
   state = {
+    user: '',
+    pass: '',
+    formUser: '',
+    formPass: '',
+    apiList: [],
     data: [], //All data
     classes: [], //All classes (un-parsed)
     activeClasses: [], //Array of Active class objects
@@ -30,11 +31,19 @@ class Resource extends Component {
 
   // Logs in to Piazza and initializes needed states
   componentWillMount() {
+    this.getLogin(this.props.user, this.props.password);
+    this.checkApiList();
+    if(this.state.user && this.state.pass) {
+      this.initialize();
+    }
+  }
+
+  initialize = () => {
     if(this.state.classes.length) {
       this.retrievePosts();
       return;
     }
-    var data = this.piazzaService.login(user, pass);
+    var data = this.piazzaService.login(this.state.user, this.state.pass);
     data.then(res => {
       const result = res;
       if(Object.entries(result).length) {
@@ -46,15 +55,6 @@ class Resource extends Component {
       }
     });
   }
-
-  componentDidMount() {
-    this.retrievePosts();
-  }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const currFolder = this.state.currentFolder !== nextState.currentFolder;
-  //   return currFolder;
-  // }
 
   // Parses into object with all of class info
   parseClasses = (param) => {
@@ -130,9 +130,32 @@ class Resource extends Component {
     return newArr;
   }
 
+  getLogin = (user, pass) => {
+    const data = this.piazzaService.getLogin(user, pass);
+    data.then(res => {
+      const apiArr = res[0].apiLogin;
+      this.setState({apiList: apiArr});
+      return;
+    });
+  }
+
+  checkApiList = () => {
+    const list = this.state.apiList.slice();
+    const filteredList = list.filter((elem, key) => {
+      return elem.name === 'piazza';
+    })
+    if(filteredList.length === 1) {
+      this.setState({
+        user: filteredList[0].user,
+        pass: filteredList[0].pass,
+      })
+    }
+    return;
+  }
+
   // Hopefully displays posts
   retrievePosts = () => {
-    const { currentClass, currentFolder } = this.state;
+    const { user, pass, currentClass, currentFolder } = this.state;
     var data = this.piazzaService.getPosts(user, pass, currentClass, currentFolder);
     data.then(res => this.setState({posts: res}));
   }
@@ -157,7 +180,6 @@ class Resource extends Component {
       folderOptions: folderList, //Options for Folders
       currentFolder: newList[0].folders[0],
     }, this.retrievePosts());
-    this.forceUpdate();
   }
 
   handleFolderChange = (event) => {
@@ -168,50 +190,114 @@ class Resource extends Component {
     this.setState({
       currentFolder: folder[0].value,
     }, this.retrievePosts());
-    this.forceUpdate();
   }
 
+  handleUserChange = (event) => {
+    this.setState({formUser: event.target.value});
+  }
+  handlePasswordChange = (event) => {
+    this.setState({formPass: event.target.value});
+  }
+  handleSubmit = (event) => {
+    const data = this.piazzaService.login(this.state.formUser, this.state.formPass);
+    console.log(data);
+    data.then(res => {
+      console.log(res);
+      if(typeof res === "string") {
+        console.log(typeof res === "string")
+        alert(res);
+      }
+      else {
+        
+        this.setState({
+          user: this.state.formUser,
+          pass: this.state.formPass
+        })
+        this.initialize();
+        const api = {
+          name: 'piazza',
+          user: this.state.formUser,
+          pass: this.state.formPass,
+        };
+        let arr = this.state.apiList.slice();
+        arr.push(api);
+        this.piazzaService.saveApi(this.state.formUser, this.state.formPass, arr);
+      }
+    });
+    event.preventDefault();
+  }
 
   // render function
   render() {
-    const { currentClass, currentFolder } = this.state;
     console.log(this.state);
     return (
       <div>
-        <div className='row'>
-            <div className='col-md-4'>
-              <label>Class: </label>
-              <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentClass} name="selected-state" options={this.state.classOptions} onChange={this.handleClassChange}/>
+        {!this.state.user &&
+          <div>
+            <div>
+              <h1 className='text-center'>PIAZZA</h1>
             </div>
-            <div className='col-md-4'>
-              <label>Folder: </label>
-              <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentFolder} name="selected-state" options={this.state.folderOptions} onChange={this.handleFolderChange}/>
+            <form className="col-md-6 col-md-offset-3">
+              <div className='form-group'>
+                <div className='input-group'>
+                  <span className="input-group-addon"><span className="glyphicon glyphicon-user"/></span>
+                  <input type='email' value={this.state.formUser} className="form-control" placeholder="Email" onChange={this.handleUserChange}/>
+                </div>
+              </div>
+              <div className='form-group'>
+                <div className='input-group'>
+                  <span className="input-group-addon"><span className="glyphicon glyphicon-lock"/></span>
+                  <input type='password' value={this.state.formPass} className="form-control" placeholder="Password" onChange={this.handlePasswordChange}/>
+                </div>
+              </div>
+
+              <div className='container-fluid row'>
+                {/* <Link to='/main' className="container-fluid"> */}
+                  <button type="submit" className="btn btn-primary btn-block" onClick={this.handleSubmit}>
+                    Submit
+                  </button>
+                {/* </Link> */}
+              </div>
+            </form>
+          </div>
+        }
+        {this.state.user &&
+          <div>
+            <div className='row'>
+              <div className='col-md-4'>
+                <label>Class: </label>
+                <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentClass} name="selected-state" options={this.state.classOptions} onChange={this.handleClassChange}/>
+              </div>
+              <div className='col-md-4'>
+                <label>Folder: </label>
+                <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentFolder} name="selected-state" options={this.state.folderOptions} onChange={this.handleFolderChange}/>
+              </div>
             </div>
-        </div>
-        <div>
-          {this.state.posts &&
-            <ReactTable
-              data={this.state.posts}
-              columns={[
-                {
-                  Header: 'Title',
-                  accessor: 'title',
-                },
-                {
-                  Header: 'Type',
-                  accessor: 'type',
-                },
-                {
-                  Header: 'Post ID',
-                  accessor: 'id',
-                }
-              ]}
-              defaultPageSize={20}
-              style={{height: "400px"}}
-              className="-striped -highlight"
-            />
-          }
-        </div>
+            <div>
+              {this.state.posts &&
+                <ReactTable
+                  data={this.state.posts}
+                  columns={[
+                    {
+                      Header: 'Title',
+                      accessor: 'title',
+                    },
+                    {
+                      Header: 'Type',
+                      accessor: 'type',
+                    },
+                    {
+                      Header: 'Post ID',
+                      accessor: 'id',
+                    }
+                  ]}
+                  style={{height: "400px"}}
+                  className="-striped -highlight"
+                />
+              }
+            </div>
+          </div>
+        }
       </div>
     )
   }

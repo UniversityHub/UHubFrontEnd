@@ -1,5 +1,5 @@
 import axios from 'axios';
-import piazza from 'piazza-api';
+//import piazza from 'piazza-api';
 
 class PiazzaService {
   login = (user, pass) => {
@@ -9,12 +9,40 @@ class PiazzaService {
       userPassword: pass,
     })
     .then(res => {
+      console.log(res);
       data = Promise.resolve((res));
       return data.then(res => res.data)
     })
     .catch(err => {
       console.log(err);
       return data;
+    })
+  }
+
+  getLogin = (user, pass) => {
+    return axios.post('http://localhost:4200/UserInfos/get-apis', {
+      userID: user,
+      userPassword: pass,
+    })
+    .then(res => res.data)
+    .catch(err => {
+      console.log(err);
+    })
+  }
+
+  saveApi = (user, pass, apiList) => {
+    console.log(apiList);
+    return axios.post('http://localhost:4200/UserInfos/save-api', {
+      userID: user,
+      userPassword: pass,
+      apiLogin: apiList,
+    })
+    .then(res => {
+      console.log(res);
+      console.log('API successfully saved');
+    })
+    .catch(err => {
+      console.log(err);
     })
   }
 
@@ -32,7 +60,6 @@ class PiazzaService {
   }
 
   getPosts = (user, pass, currClass, currFolder) => {
-    
     return axios.post('http://localhost:4200/piazza/posts', {
       userID: user,
       userPassword: pass,

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import '../../assets/scss/_SignUp.scss';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 import UserInfoService from '../UserInfoService';
 import ToDoListService from '../ToDoListService';
-import classNames from 'classnames';
+//import classNames from 'classnames';
 
 class SignUp extends Component {
 
@@ -38,6 +38,14 @@ class SignUp extends Component {
   }
 
   checkEmail = (email) => {
+    const obj = {
+      UHub: {
+        user: this.state.user,
+        pass: this.state.password,
+      }
+    }
+    const arr = [];
+    arr.push(obj);
     return axios.post('http://localhost:4200/UserInfos/check-email', {
       userEmail: email
     })

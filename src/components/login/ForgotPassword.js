@@ -62,7 +62,7 @@ class ForgotPassword extends Component {
   }
 
   validate = () => {
-    const { user, password, passwordRepeat } = this.state;
+    const { password, passwordRepeat } = this.state;
     const specChar = /[!@#$%^&*]/g;
     const num = /[0-9]/g
 
@@ -71,6 +71,9 @@ class ForgotPassword extends Component {
       return 1;
     } else if(password !== passwordRepeat) {
       alert('Your passwords MUST match!');
+      return 1;
+    } else if(!password.search(specChar) || !password.search(num)) {
+      alert('Your password MUST contain at least ONE special character or ONE num!');
       return 1;
     }
     return 0;

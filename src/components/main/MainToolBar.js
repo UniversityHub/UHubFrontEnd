@@ -11,19 +11,19 @@ class MainToolBar extends Component {
     return (
       <div className="col-md-1 sidebar">
         <button type="button" className="list-group-item row sidebar-item">
-          <img src={home_icon} className='sidebar-item-icon'/>
+          <img alt='' src={home_icon} className='sidebar-item-icon'/>
         </button>
         <button type="button" onClick={this.props.handleCalendarClick} className="list-group-item row sidebar-item">
-          <img src={calendar_icon} className='sidebar-item-icon'/>
+          <img alt='' src={calendar_icon} className='sidebar-item-icon'/>
         </button>
         <button type="button" onClick={this.props.handleTodoClick} className="list-group-item row sidebar-item">
-          <img src={profile_icon} className='sidebar-item-icon'/>
+          <img alt='' src={profile_icon} className='sidebar-item-icon'/>
         </button>
         <button type="button" className="list-group-item row sidebar-item">
-          <img src={messaging_icon} className='sidebar-item-icon'/>
+          <img alt='' src={messaging_icon} className='sidebar-item-icon'/>
         </button>
         <button type="button" className="list-group-item row sidebar-item">
-          <img src={friends_icon} className='sidebar-item-icon'/>
+          <img alt='' src={friends_icon} className='sidebar-item-icon'/>
         </button>
       </div>
     )
