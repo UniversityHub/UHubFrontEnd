@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
+import '../../assets/scss/_MainNavBar.css'
 
 class MainNavBar extends Component {
   render() {
     return (
       <div>
-        <nav className="navbar navbar-default col-md-12">
+        <nav className="navbar navbar-default main-nav-bar col-md-12">
           <div className="container-fluid">
             <div className="navbar-header">
-              <a className="navbar-brand" href="#">UHub</a>
+              <a className="navbar-brand" href="">UHub</a>
             </div>
             <ul className="nav navbar-nav">
-              <li className="active"><a href="#">Home</a></li>
-              <li><a href="#">Page 1</a></li>
-              <li><a href="#">Page 2</a></li>
+              <li className="active"><a href="">Home</a></li>
+              <li><a href="">Page 1</a></li>
+              <li><a href="">Page 2</a></li>
             </ul>
             <form className='navbar-form navbar-left'>
               <div className="input-group">
@@ -34,11 +35,11 @@ class MainNavBar extends Component {
                   <span className="caret"></span>
                 </button>
                 <ul className="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
+                  <li><a href="">Action</a></li>
+                  <li><a href="">Another action</a></li>
+                  <li><a href="">Something else here</a></li>
                   <li role="separator" className="divider"></li>
-                  <li><a href="#">Separated link</a></li>
+                  <li><a href="">Separated link</a></li>
                 </ul>
               </div>
             </div>

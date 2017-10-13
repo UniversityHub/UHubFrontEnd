@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import classNames from 'classnames';
+import UserInfoService from '../UserInfoService';
 import '../../assets/scss/_LoginForm.scss'
 
 export default class MyComponent extends Component {
@@ -11,20 +13,35 @@ export default class MyComponent extends Component {
     submitted: false
   }
 
-  componentWillMount () {
-    if(sessionStorage.getItem('loginSubmit')) {
-      let newState = sessionStorage.getItem('loginSubmit');
-      this.setState(JSON.parse(newState));
-    }
+  constructor(props) {
+    super(props);
+    this.addUserService = new UserInfoService();
   }
 
-  store = () => {
-    let newState = this.state;
-    sessionStorage.setItem('loginSubmit', JSON.stringify(newState));
+  authenticateData = (user, pass) => {
+    return axios.post('http://localhost:4200/UserInfos/authenticate-password', {
+      userID: user,
+      userPassword: pass
+    })
+    .then(res => {
+      if(res.data.length) {
+        this.props.history.push({
+          pathname: '/main',
+          state: {
+            user: this.state.user,
+            password: this.state.password,
+          },
+        });
+      }else {
+        alert('Wrong User and/or Password!');
+      }
+    })
+    .catch(err => console.log(err));
   }
 
-  handleSubmit = () => {
-    this.setState({ submitted : !this.state.submitted }, ()=>this.store())
+  handleSubmit = (event) => {
+    event.preventDefault();
+    this.authenticateData(this.state.user, this.state.password);
   }
 
   handleUserChange = (event) => {
@@ -38,14 +55,14 @@ export default class MyComponent extends Component {
   render() {
     var usrInput = classNames({
       'form-group': true,
-      'has-success': this.state.submitted && this.state.user,
-      'has-error': this.state.submitted && !this.state.user,
+      // 'has-success': this.state.user,
+      // 'has-error': !this.state.user,
     });
 
     var passwordInput = classNames({
       'form-group': true,
-      'has-success': this.state.submitted && this.state.password,
-      'has-error': this.state.submitted && !this.state.password5,
+      // 'has-success': this.state.password,
+      // 'has-error': !this.state.password,
     });
 
     return (
@@ -57,7 +74,7 @@ export default class MyComponent extends Component {
           <div className={usrInput}>
             <div className='input-group'>
               <span className="input-group-addon"><span className="glyphicon glyphicon-user"/></span>
-              <input type='email' value={this.state.user} className="form-control" placeholder="Username" onChange={this.handleUserChange}/>
+              <input type='' value={this.state.user} className="form-control" placeholder="Username" onChange={this.handleUserChange}/>
             </div>
           </div>
           <div className={passwordInput}>
@@ -73,14 +90,14 @@ export default class MyComponent extends Component {
             </label>
           </div>
           <div className='container-fluid row'>
-            <Link to='/main' className="container-fluid">
+            {/* <Link to='/main' className="container-fluid"> */}
               <button type="submit" className="btn btn-primary btn-block" >
                 Submit
               </button>
-            </Link>
+            {/* </Link> */}
           </div>
           <div className='container-fluid row'>
-            <Link to='/' className=''>
+            <Link to='/forgot-password' className=''>
               <button type="submit" className="btn btn-default col-md-5" >
                 Forgot Pasword
               </button>
