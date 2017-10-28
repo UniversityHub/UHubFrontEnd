@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import SelectBar from 'react-select';
-//import piazza from 'piazza-api';
-//import axios from 'axios';
 import PiazzaService from '../PiazzaService';
 import ReactTable from 'react-table';
+
+
 class Resource extends Component {
 
   // this.state object
   state = {
     user: '',
     pass: '',
-    formUser: '',
-    formPass: '',
+    formUser: '', //User ID written in form
+    formPass: '', //Password written in form
     apiList: [],
     data: [], //All data
     classes: [], //All classes (un-parsed)
@@ -31,13 +31,29 @@ class Resource extends Component {
 
   // Logs in to Piazza and initializes needed states
   componentWillMount() {
-    this.getLogin(this.props.user, this.props.password);
-    this.checkApiList();
-    if(this.state.user && this.state.pass) {
+    const data = this.piazzaService.getLogin(this.props.user, this.props.password);
+    data.then(res => {
+      const apiArr = res[0].apiLogin;
+      this.checkApiList(apiArr);
+      this.setState({apiList: apiArr});
+      return;
+    });
+    // this.getLogin(this.props.user, this.props.password);
+    console.log('apiList: ')
+    console.log(this.state.apiList);
+    // this.checkApiList();
+    if(this.state.user.length && this.state.pass.length) {
+      console.log('do you come in here?')
       this.initialize();
     }
   }
 
+  componentDidMount() {
+
+
+  }
+
+  // initialize all states
   initialize = () => {
     if(this.state.classes.length) {
       this.retrievePosts();
@@ -46,6 +62,8 @@ class Resource extends Component {
     var data = this.piazzaService.login(this.state.user, this.state.pass);
     data.then(res => {
       const result = res;
+      console.log("data object: ");
+      console.log(result);
       if(Object.entries(result).length) {
         this.setState({data: result});
         let list = this.getClasses(result);
@@ -77,6 +95,8 @@ class Resource extends Component {
       };
       nameList.push(obj);
     })
+    console.log('courseList: ')
+    console.log(courseList)
     const item = courseList[0];
 
     let folderList = [];
@@ -139,16 +159,16 @@ class Resource extends Component {
     });
   }
 
-  checkApiList = () => {
-    const list = this.state.apiList.slice();
-    const filteredList = list.filter((elem, key) => {
+  checkApiList = (apiArr) => {
+    const filteredList = apiArr.filter((elem, key) => {
       return elem.name === 'piazza';
     })
+
     if(filteredList.length === 1) {
       this.setState({
         user: filteredList[0].user,
         pass: filteredList[0].pass,
-      })
+      }, this.initialize)
     }
     return;
   }
@@ -157,7 +177,13 @@ class Resource extends Component {
   retrievePosts = () => {
     const { user, pass, currentClass, currentFolder } = this.state;
     var data = this.piazzaService.getPosts(user, pass, currentClass, currentFolder);
-    data.then(res => this.setState({posts: res}));
+
+    data.then(res => {
+      //console.log('posts inside promise: ');
+      //console.log(JSON.parse(res));
+      const parsedPosts = JSON.parse(res);
+      this.setState({posts: parsedPosts})
+    });
   }
 
   handleClassChange = (event) => {
@@ -200,15 +226,15 @@ class Resource extends Component {
   }
   handleSubmit = (event) => {
     const data = this.piazzaService.login(this.state.formUser, this.state.formPass);
-    console.log(data);
+    //console.log(data);
     data.then(res => {
-      console.log(res);
+      //console.log(res);
       if(typeof res === "string") {
         console.log(typeof res === "string")
         alert(res);
       }
       else {
-        
+
         this.setState({
           user: this.state.formUser,
           pass: this.state.formPass
@@ -221,7 +247,7 @@ class Resource extends Component {
         };
         let arr = this.state.apiList.slice();
         arr.push(api);
-        this.piazzaService.saveApi(this.state.formUser, this.state.formPass, arr);
+        this.piazzaService.saveApi(this.props.user, this.props.password, arr);
       }
     });
     event.preventDefault();
@@ -291,6 +317,44 @@ class Resource extends Component {
                       accessor: 'id',
                     }
                   ]}
+                  SubComponent={row => {
+                    const postObj = row.original
+                    const mainContent = row.original.content
+                    console.log(row.original);
+                    const studentRes = !Object.is(postObj.studentResponse);
+                    const instructorRes = !Object.is(postObj.instructorResponse);
+                    console.log(studentRes);
+                    console.log(instructorRes);
+                    return (
+                      <div>
+                        <div className='panel panel-primary'>
+                          <div className='panel-heading'>
+                            <h3 className='panel-title'>{postObj.type}</h3>
+                          </div>
+                          <div className='panel-body' dangerouslySetInnerHTML={{__html: mainContent}}>
+                          </div>
+                        </div>
+                        {instructorRes &&
+                          <div className='panel panel-success'>
+                            <div className='panel-heading'>
+                              <h3 className='panel-title'>Instructors' Response</h3>
+                            </div>
+                            <div className='panel-body' dangerouslySetInnerHTML={{__html: postObj.instructorResponse.content}}>
+                            </div>
+                          </div>
+                        }
+                        {studentRes &&
+                          <div className='panel panel-success'>
+                            <div className='panel-heading'>
+                              <h3 className='panel-title'>Students' Response</h3>
+                            </div>
+                            <div className='panel-body' dangerouslySetInnerHTML={{__html: postObj.studentResponse.content}}>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    )
+                  }}
                   style={{height: "400px"}}
                   className="-striped -highlight"
                 />
