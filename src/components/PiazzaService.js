@@ -44,8 +44,35 @@ class PiazzaService {
     })
   }
 
+  postQuestion = (title, content, user, pass, classID, obj) => {
+    console.log('IM A QUESTION');
+    return axios.post('http://localhost:4200/piazza/posts/question', {
+      title: title,
+      content: content,
+      username: user,
+      password: pass,
+      classID: classID,
+      postObj: obj,
+    })
+    .then(res => console.log('successfully posted'))
+    .catch(err => console.log(err))
+  }
+
+  postNote = (title, content, user, pass, classID, obj) => {
+    console.log('IM A NOTE');
+    return axios.post('http://localhost:4200/piazza/posts/note', {
+      title: title,
+      content: content,
+      username: user,
+      password: pass,
+      classID: classID,
+      postObj: obj,
+    })
+    .then(res => console.log('successfully posted'))
+    .catch(err => console.log(err))
+  }
+
   postAnswer = (postObj, answer) => {
-    //console.log(postObj)
     return axios.post('http://localhost:4200/piazza/posts/answer', {
       postObj: postObj,
       answer: answer,

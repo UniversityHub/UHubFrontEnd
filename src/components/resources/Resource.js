@@ -3,6 +3,7 @@ import SelectBar from 'react-select';
 import PiazzaService from '../PiazzaService';
 import ReactTable from 'react-table';
 import PostAnswer from './Piazza/PostAnswer';
+const APIs = require('../data/APIs');
 
 
 class Resource extends Component {
@@ -23,6 +24,12 @@ class Resource extends Component {
     currentFolder: '', //Current folder
     posts: [],
     postButton: false,
+    postForm: false, //Boolean for Post Question/Note form render
+    postTitle: '', //Title for Question or Note
+    postContent: '', //Content for Question or Note
+    postFolders: [],
+    postType: '', //Question OR Note
+    selectionFolders: [], //Options for Folder FOR SELECT BAR ONLY
   }
 
   // Constructor (initializes piazza service tool)
@@ -105,12 +112,23 @@ class Resource extends Component {
       folderList.push(obj);
     })
 
+    const folderSelect = [];
+    folderList.map((elem, key) => {
+      const obj = {
+        value: elem,
+        label: elem
+      };
+      folderSelect.push(obj);
+    });
+
     this.setState({
       classOptions: nameList, //Options for classes
       currentClass: item.courseNumber, //Current Class
       folderOptions: folderList, //Options for Folders
       currentFolder: item.folders[0],
+      selectionFolders: folderSelect
     })
+
   }
 
   // Parses into object with specific class info (id, name, courseNum, and folders)
@@ -134,6 +152,7 @@ class Resource extends Component {
       };
       courseList.push(newObj);
     })
+
     this.setState({activeClasses: courseList})
     return courseList;
   }
@@ -225,9 +244,11 @@ class Resource extends Component {
   handleUserChange = (event) => {
     this.setState({formUser: event.target.value});
   }
+
   handlePasswordChange = (event) => {
     this.setState({formPass: event.target.value});
   }
+
   handleSubmit = (event) => {
     const data = this.piazzaService.login(this.state.formUser, this.state.formPass);
     //console.log(data);
@@ -258,12 +279,67 @@ class Resource extends Component {
   }
 
   handlePost = (event) => {
-    this.setState({postButton: !this.state.postButton});
+    this.setState({postForm: !this.state.postForm});
+  }
+
+  handlePostTitle = (event) => {
+    this.setState({postTitle: event.target.value});
+  }
+  handlePostContent = (event) => {
+    this.setState({postContent: event.target.value});
+  }
+
+  handlePostFolders = (value) => {
+		this.setState({ postFolders: value });
+	}
+
+  handlePostType = (event) => {
+    this.setState({postType: event.value});
+  }
+
+  handlePostSubmit = (event) => {
+    if(!this.validate()) {
+      return;
+    }
+
+    const { postTitle, postContent, postFolders, postType, user, pass, posts} = this.state;
+    const folders = postFolders.filter((elem, key) => {
+      return elem.value;
+    })
+    const classID = posts[0].classID;
+    const postObj = {
+      bypass_email: false,
+      folders: folders,
+      anonymous: 'full'
+    };
+    if(postType === 'Question') {
+      this.piazzaService.postQuestion(postTitle, postContent, user, pass, classID, postObj);
+    }else if(postType === 'Note') {
+      this.piazzaService.postNote(postTitle, postContent, user, pass, classID, postObj);
+    }
+    this.setState({postForm: !this.state.postForm});
+  }
+
+  validate = () => {
+    let validated = false;
+    if(!this.state.postTitle.length) {
+      alert('Please write title');
+    }else if(!this.state.postContent.length) {
+      alert('Please write context');
+    }else if(!this.state.postFolders.length) {
+      alert('Please select at least ONE folder');
+    }else if(!this.state.postType.length) {
+      alert('Please choose a type');
+    }else {
+      validated = true;
+    }
+    return validated;
   }
 
   // render function
   render() {
     console.log(this.state);
+    let postOptions = APIs['post'];
     return (
       <div>
         {!this.state.user &&
@@ -286,100 +362,126 @@ class Resource extends Component {
               </div>
 
               <div className='container-fluid row'>
-                {/* <Link to='/main' className="container-fluid"> */}
                   <button type="submit" className="btn btn-primary btn-block" onClick={this.handleSubmit}>
                     Submit
                   </button>
-                {/* </Link> */}
               </div>
             </form>
           </div>
         }
         {this.state.user &&
           <div>
-            <div className='row'>
-              <div className='col-md-4'>
-                <label>Class: </label>
-                <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentClass} name="selected-state" options={this.state.classOptions} onChange={this.handleClassChange}/>
+            {this.state.postForm &&
+              <div>
+                <h1 className='text-center'>POST QUESTION/NOTE</h1>
+                <div className="form-group">
+                  <label className='center'>Title</label>
+                  <input className="form-control" placeholder="Title..." onChange={this.handlePostTitle} value={this.state.postTitle}/>
+                </div>
+                <div className="form-group">
+                  <label className='center'>Content</label>
+                  <textarea className="form-control" rows="3" onChange={this.handlePostContent} value={this.state.postContent}></textarea>
+                </div>
+                <div className='col-md-4'>
+                  <SelectBar simplevalue multi autofocus={true} searchable={false} value={this.state.postFolders} name="selected-state" placeholder='Tags' options={this.state.folderOptions} onChange={this.handlePostFolders}/>
+                </div>
+                <div className='col-md-4 col-md-offset-3'>
+                  <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.postType} options={postOptions} onChange={this.handlePostType}/>
+                </div>
+                <div className='container-fluid row'>
+                    <button type="submit" className="btn btn-primary btn-block" onClick={this.handlePostSubmit}>
+                      Submit Question
+                    </button>
+                </div>
               </div>
-              <div className='col-md-4'>
-                <label>Folder: </label>
-                <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentFolder} name="selected-state" options={this.state.folderOptions} onChange={this.handleFolderChange}/>
-              </div>
-              <div className='btn-group col-md-4'>
-                <button type="button" className="btn btn-primary" onClick={this.handlePost}>Post</button>
-              </div>
-            </div>
-            <div>
-              {this.state.posts &&
-                <ReactTable
-                  data={this.state.posts}
-                  filterable
-                  defaultFilterMethod={(filter, row) =>
-                              String(row[filter.id]) === filter.value}
-                  columns={[
-                    {
-                      Header: 'Title',
-                      accessor: 'title',
-                      filterMethod: (filter, row) =>
-                        row[filter.id].startsWith(filter.value) &&
-                        row[filter.id].endsWith(filter.value)
-                    },
-                    {
-                      Header: 'Type',
-                      accessor: 'type',
-                    },
-                    {
-                      Header: 'Post ID',
-                      accessor: 'id',
-                    }
-                  ]}
-                  SubComponent={row => {
-                    const postObj = row.original;
-                    const mainContent = row.original.content;
-                    const studentRes = !Object.is(postObj.studentResponse);
-                    const instructorRes = !Object.is(postObj.instructorResponse);
-
-
-                    return (
-                      <div>
-                        <div className='panel panel-primary'>
-                          <div className='panel-heading'>
-                            <h3 className='panel-title'>{postObj.type}</h3>
-                          </div>
-                          <div className='panel-body' dangerouslySetInnerHTML={{__html: mainContent}}>
-
-                          </div>
-                          {postObj.type === 'question' && <PostAnswer postObj={postObj}/>}
-                        </div>
-
-
-                        {instructorRes &&
-                          <div className='panel panel-success'>
-                            <div className='panel-heading'>
-                              <h3 className='panel-title'>Instructors' Response</h3>
-                            </div>
-                            <div className='panel-body' dangerouslySetInnerHTML={{__html: postObj.instructorResponse.content}}>
-                            </div>
-                          </div>
+            }
+            {!this.state.postForm &&
+              <div>
+                <div className='row'>
+                  <div className='col-md-4'>
+                    <label>Class: </label>
+                    <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentClass} name="selected-state" options={this.state.classOptions} onChange={this.handleClassChange}/>
+                  </div>
+                  <div className='col-md-4'>
+                    <label>Folder: </label>
+                    <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentFolder} name="selected-state" options={this.state.folderOptions} onChange={this.handleFolderChange}/>
+                  </div>
+                  <div className='btn-group col-md-4'>
+                    <button type="button" className="btn btn-primary" onClick={this.handlePost}>Post</button>
+                  </div>
+                </div>
+                <div>
+                  {this.state.posts &&
+                    <ReactTable
+                      data={this.state.posts}
+                      filterable
+                      defaultFilterMethod={(filter, row) =>
+                                  String(row[filter.id]) === filter.value}
+                      columns={[
+                        {
+                          Header: 'Title',
+                          accessor: 'title',
+                          filterMethod: (filter, row) =>
+                            row[filter.id].startsWith(filter.value) &&
+                            row[filter.id].endsWith(filter.value)
+                        },
+                        {
+                          Header: 'Type',
+                          accessor: 'type',
+                        },
+                        {
+                          Header: 'Post ID',
+                          accessor: 'id',
                         }
-                        {studentRes &&
-                          <div className='panel panel-success'>
-                            <div className='panel-heading'>
-                              <h3 className='panel-title'>Students' Response</h3>
+                      ]}
+                      SubComponent={row => {
+                        const postObj = row.original;
+                        const mainContent = row.original.content;
+                        const studentRes = !Object.is(postObj.studentResponse);
+                        const instructorRes = !Object.is(postObj.instructorResponse);
+
+
+                        return (
+                          <div>
+                            <div className='panel panel-primary'>
+                              <div className='panel-heading'>
+                                <h3 className='panel-title'>{postObj.type}</h3>
+                              </div>
+                              <div className='panel-body' dangerouslySetInnerHTML={{__html: mainContent}}>
+
+                              </div>
+                              {postObj.type === 'question' && <PostAnswer postObj={postObj}/>}
                             </div>
-                            <div className='panel-body' dangerouslySetInnerHTML={{__html: postObj.studentResponse.content}}>
-                            </div>
+
+
+                            {instructorRes &&
+                              <div className='panel panel-success'>
+                                <div className='panel-heading'>
+                                  <h3 className='panel-title'>Instructors' Response</h3>
+                                </div>
+                                <div className='panel-body' dangerouslySetInnerHTML={{__html: postObj.instructorResponse.content}}>
+                                </div>
+                              </div>
+                            }
+                            {studentRes &&
+                              <div className='panel panel-success'>
+                                <div className='panel-heading'>
+                                  <h3 className='panel-title'>Students' Response</h3>
+                                </div>
+                                <div className='panel-body' dangerouslySetInnerHTML={{__html: postObj.studentResponse.content}}>
+                                </div>
+                              </div>
+                            }
                           </div>
-                        }
-                      </div>
-                    )
-                  }}
-                  style={{height: "400px"}}
-                  className="-striped -highlight"
-                />
-              }
-            </div>
+                        )
+                      }}
+                      style={{height: "400px"}}
+                      className="-striped -highlight"
+                    />
+                  }
+                </div>
+              </div>
+            }
           </div>
         }
       </div>

@@ -11,7 +11,6 @@ class SelectionMenu extends Component {
   handleChange = (event) => {
     this.setState({api: event.value});
     this.props.handleChange(event.value);
-
   }
 
   render() {
