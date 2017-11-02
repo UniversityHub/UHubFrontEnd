@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import SelectBar from 'react-select';
 import PiazzaService from '../PiazzaService';
 import ReactTable from 'react-table';
+import PostAnswer from './Piazza/PostAnswer';
 
 
 class Resource extends Component {
@@ -21,6 +22,7 @@ class Resource extends Component {
     folderOptions: [], //Options for Folders
     currentFolder: '', //Current folder
     posts: [],
+    postButton: false,
   }
 
   // Constructor (initializes piazza service tool)
@@ -46,11 +48,6 @@ class Resource extends Component {
       console.log('do you come in here?')
       this.initialize();
     }
-  }
-
-  componentDidMount() {
-
-
   }
 
   // initialize all states
@@ -182,6 +179,13 @@ class Resource extends Component {
       //console.log('posts inside promise: ');
       //console.log(JSON.parse(res));
       const parsedPosts = JSON.parse(res);
+      const userInfo = {
+        user: user,
+        password: pass,
+      }
+      parsedPosts.map((elem, key) => {
+        Object.assign(elem, userInfo);
+      })
       this.setState({posts: parsedPosts})
     });
   }
@@ -253,6 +257,10 @@ class Resource extends Component {
     event.preventDefault();
   }
 
+  handlePost = (event) => {
+    this.setState({postButton: !this.state.postButton});
+  }
+
   // render function
   render() {
     console.log(this.state);
@@ -298,15 +306,24 @@ class Resource extends Component {
                 <label>Folder: </label>
                 <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.currentFolder} name="selected-state" options={this.state.folderOptions} onChange={this.handleFolderChange}/>
               </div>
+              <div className='btn-group col-md-4'>
+                <button type="button" className="btn btn-primary" onClick={this.handlePost}>Post</button>
+              </div>
             </div>
             <div>
               {this.state.posts &&
                 <ReactTable
                   data={this.state.posts}
+                  filterable
+                  defaultFilterMethod={(filter, row) =>
+                              String(row[filter.id]) === filter.value}
                   columns={[
                     {
                       Header: 'Title',
                       accessor: 'title',
+                      filterMethod: (filter, row) =>
+                        row[filter.id].startsWith(filter.value) &&
+                        row[filter.id].endsWith(filter.value)
                     },
                     {
                       Header: 'Type',
@@ -318,13 +335,12 @@ class Resource extends Component {
                     }
                   ]}
                   SubComponent={row => {
-                    const postObj = row.original
-                    const mainContent = row.original.content
-                    console.log(row.original);
+                    const postObj = row.original;
+                    const mainContent = row.original.content;
                     const studentRes = !Object.is(postObj.studentResponse);
                     const instructorRes = !Object.is(postObj.instructorResponse);
-                    console.log(studentRes);
-                    console.log(instructorRes);
+
+
                     return (
                       <div>
                         <div className='panel panel-primary'>
@@ -332,8 +348,12 @@ class Resource extends Component {
                             <h3 className='panel-title'>{postObj.type}</h3>
                           </div>
                           <div className='panel-body' dangerouslySetInnerHTML={{__html: mainContent}}>
+
                           </div>
+                          {postObj.type === 'question' && <PostAnswer postObj={postObj}/>}
                         </div>
+
+
                         {instructorRes &&
                           <div className='panel panel-success'>
                             <div className='panel-heading'>

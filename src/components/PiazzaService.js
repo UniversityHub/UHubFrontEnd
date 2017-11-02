@@ -4,10 +4,6 @@ import axios from 'axios';
 class PiazzaService {
   login = (user, pass) => {
     var data = {};
-    console.log('user:')
-    console.log(user)
-    console.log('pass:')
-    console.log(pass)
     return axios.post('http://localhost:4200/piazza/get-piazza', {
       userID: user,
       userPassword: pass,
@@ -35,8 +31,6 @@ class PiazzaService {
   }
 
   saveApi = (user, pass, apiList) => {
-    console.log('apiList: ')
-    console.log(apiList);
     return axios.post('http://localhost:4200/UserInfos/save-api', {
       userID: user,
       userPassword: pass,
@@ -50,8 +44,17 @@ class PiazzaService {
     })
   }
 
+  postAnswer = (postObj, answer) => {
+    //console.log(postObj)
+    return axios.post('http://localhost:4200/piazza/posts/answer', {
+      postObj: postObj,
+      answer: answer,
+    })
+    .then(res => console.log('successfully posted'))
+    .catch(err => console.log(err))
+  }
+
   updateSchools = (user, pass, courseList) => {
-    console.log(courseList);
     axios.post('http://localhost:4200/piazza/save-schools', {
       userID: user,
       userPassword: pass,
@@ -72,10 +75,7 @@ class PiazzaService {
 
     })
     .then(res => {
-      console.log('res');
       console.log(res);
-      //console.log('res.data');
-      //console.log(res.data);
       return res.data;
     })
     .catch(err => console.log(err))
