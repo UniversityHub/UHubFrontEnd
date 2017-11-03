@@ -29,7 +29,6 @@ export default class MyComponent extends Component {
           pathname: '/main',
           state: {
             user: this.state.user,
-            password: this.state.password,
           },
         });
       }else {

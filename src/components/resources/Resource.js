@@ -448,9 +448,8 @@ class Resource extends Component {
                                 <h3 className='panel-title'>{postObj.type}</h3>
                               </div>
                               <div className='panel-body' dangerouslySetInnerHTML={{__html: mainContent}}>
-
                               </div>
-                              {postObj.type === 'question' && <PostAnswer postObj={postObj}/>}
+                              {/* {postObj.type === 'question' && <PostAnswer postObj={postObj}/>} */}
                             </div>
 
 

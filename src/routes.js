@@ -4,7 +4,7 @@ import LoginForm from './components/login/LoginForm';
 import SignUp from './components/login/SignUp';
 import ForgotPassword from './components/login/ForgotPassword';
 import MainPage from './components/main/MainPage';
-
+import SettingsPage from './components/Settings/SettingsPage';
 export default [
   {
     component: Base,
@@ -38,6 +38,12 @@ export default [
         exact: true,
         component: MainPage,
         name: "MainPage"
+      },
+      {
+        path: '/settings',
+        exact: true,
+        component: SettingsPage,
+        name: "SettingsPage"
       },
     ]
   },

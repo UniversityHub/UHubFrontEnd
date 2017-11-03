@@ -3,7 +3,7 @@ import axios from 'axios';
 class CalendarService {
 
   //Initialize Calendar object for New User
-  initializeCalendar = (user) => {
+  initialize = (user) => {
     axios.post('http://localhost:4200/calendar/initialize', {
       userID: user,
       events: []

@@ -1,15 +1,16 @@
 import axios from 'axios';
 
 class UserItemService {
-  sendData = (email, user, pass) => {
+  sendData = (email, user, pass, first, last) => {
     axios.post('http://localhost:4200/UserInfos/add/post', {
       userID: user,
       userEmail: email,
       userPassword: pass,
+      firstName: first,
+      lastName: last,
     })
     .then(res => {
       console.log(res);
-      this.setState({ userInfos: res.data })
     })
     .catch(err => console.log(err))
   }
@@ -37,6 +38,16 @@ class UserItemService {
     })
     .then(res => {
       console.log('password successfully changed');
+    })
+    .catch(err => console.log(err))
+  }
+
+  getPassword = (user) => {
+    return axios.post('http://localhost:4200/UserInfos/getPassword', {
+      userID: user,
+    })
+    .then(res => {
+      return res.data[0];
     })
     .catch(err => console.log(err))
   }

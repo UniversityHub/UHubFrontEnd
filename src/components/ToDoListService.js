@@ -8,7 +8,6 @@ class ToDoItemService {
     })
     .then(res => {
       console.log(res);
-      this.setState({ todoList: res.data })
     })
     .catch(err => console.log(err))
   }
