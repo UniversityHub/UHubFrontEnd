@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class FriendService {
   initialize = (user) => {
-    axios.post('http://localhost:4200/friendInfo/initialize', {
+    axios.post('http://localhost:4200/connect/initialize', {
       userID: user,
       friends: [],
     })
@@ -13,17 +13,29 @@ class FriendService {
   }
 
   //grab user ID from all user list
-  getUserID = (user) => {
-    return axios.post('http://localhost:4200/friendInfo/')
-    .then(res => console.log(res.data))
+  getAllUsers = () => {
+    return axios.post('http://localhost:4200/connect/all')
+    .then(res => {
+      return res.data;
+    })
     .catch(err => console.log(err))
   }
 
-  addFriend = (user, entries) => {
-    console.log(user);
-    axios.post('http://localhost:4200/friendInfo/add-friend', {
+  //Retrieve friends for a user
+  getFriends = (user) => {
+    return axios.post('http://localhost:4200/connect/friends', {
       userID: user,
-      friends: entries,
+    })
+    .then(res => {
+      return res.data[0].friends;
+    })
+    .catch(err => console.log(err))
+  }
+
+  addFriend = (user, friends) => {
+    axios.post('http://localhost:4200/connect/add-friend', {
+      userID: user,
+      friends: friends,
     })
     .then(res => {
       console.log('entry successfully added');

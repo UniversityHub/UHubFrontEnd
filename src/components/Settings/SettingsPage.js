@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import UpdatePassword from './UpdatePassword';
+import PersonalInfo from './PersonalInfo';
 
 class SettingsPage extends Component {
 
@@ -31,8 +32,7 @@ class SettingsPage extends Component {
 
           <div className="tab-content col-md-8">
             <div id="personalInfo" className="tab-pane fade in active">
-              <h3>Menu 1</h3>
-              <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              <PersonalInfo user={this.props.location.state.user} />
             </div>
             <div id="updatePassword" className="tab-pane fade">
               <UpdatePassword user={this.props.location.state.user} />

@@ -23,7 +23,6 @@ class Resource extends Component {
     folderOptions: [], //Options for Folders
     currentFolder: '', //Current folder
     posts: [],
-    postButton: false,
     postForm: false, //Boolean for Post Question/Note form render
     postTitle: '', //Title for Question or Note
     postContent: '', //Content for Question or Note
@@ -297,6 +296,16 @@ class Resource extends Component {
     this.setState({postType: event.value});
   }
 
+  handlePostBack = () => {
+    this.setState({
+      postForm: !this.state.postForm,
+      postTitle: '', //Title for Question or Note
+      postContent: '', //Content for Question or Note
+      postFolders: [],
+      postType: '', //Question OR Note});
+    })
+  }
+
   handlePostSubmit = (event) => {
     if(!this.validate()) {
       return;
@@ -317,6 +326,7 @@ class Resource extends Component {
     }else if(postType === 'Note') {
       this.piazzaService.postNote(postTitle, postContent, user, pass, classID, postObj);
     }
+    alert('Successfully Posted')
     this.setState({postForm: !this.state.postForm});
   }
 
@@ -389,8 +399,11 @@ class Resource extends Component {
                   <SelectBar simplevalue autofocus={true} searchable={false} value={this.state.postType} options={postOptions} onChange={this.handlePostType}/>
                 </div>
                 <div className='container-fluid row'>
-                    <button type="submit" className="btn btn-primary btn-block" onClick={this.handlePostSubmit}>
+                    <button type="submit" className="btn btn-success btn-block col-md-5" onClick={this.handlePostSubmit}>
                       Submit Question
+                    </button>
+                    <button type="submit" className="btn btn-primary btn-block col-md-5" onClick={this.handlePostBack}>
+                      Back
                     </button>
                 </div>
               </div>

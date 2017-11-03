@@ -42,7 +42,7 @@ class UserItemService {
     .catch(err => console.log(err))
   }
 
-  getPassword = (user) => {
+  getUser = (user) => {
     return axios.post('http://localhost:4200/UserInfos/getPassword', {
       userID: user,
     })

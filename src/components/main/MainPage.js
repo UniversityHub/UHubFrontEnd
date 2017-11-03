@@ -28,7 +28,7 @@ class MainPage extends Component {
   }
 
   componentWillMount(){
-    this.addUserService.getPassword(this.props.location.state.user)
+    this.addUserService.getUser(this.props.location.state.user)
       .then(result => {
         this.setState({password: result.userPassword});
       })
@@ -68,11 +68,14 @@ class MainPage extends Component {
         <MainNavBar />
         <MainToolBar handleTodoClick={this.handleTodoClick} handleFriendsClick={this.handleFriendsClick} handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
         <div className='col-md-6'>
-          {this.state.filter && <SelectionMenu handleChange={this.handleSelectionChange}/>
-          }
-          {this.state.piazza && <Resource api='piazza' user={this.props.location.state.user} password={this.state.password}/>}
-          {this.state.portal && <PortalOffice />}
+        <SelectionMenu handleChange={this.handleSelectionChange}/>
         </div>
+          <div className='col-md-6'>
+        {this.state.piazza && <Resource api='piazza' user={this.props.location.state.user} password={this.state.password}/>}
+        </div>
+          <div className='col-md-6'>
+        {this.state.portal && <PortalOffice />}
+      </div>
         {this.state.todo && <TodoList user={this.props.location.state.user} />}
         {this.state.friends && <ConnectwithFriends user={this.props.location.state.user} />}
         {this.state.calendar && <Calendar user={this.props.location.state.user} />}

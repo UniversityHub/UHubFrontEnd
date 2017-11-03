@@ -16,7 +16,7 @@ class UpdatePassword extends Component {
   }
 
   componentWillMount(){
-    this.addUserService.getPassword(this.props.user)
+    this.addUserService.getUser(this.props.user)
       .then(result => {
         this.setState({password: result.userPassword});
       })

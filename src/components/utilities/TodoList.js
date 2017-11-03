@@ -17,31 +17,24 @@ class TodoList extends Component {
     this.addTodoListService = new ToDoListService();
   }
 
-  // componentWillMount = () => {
-  //   axios.post('http://localhost:4200/todoList/get-user-list', {
-  //     userID: this.props.user,
-  //   })
-  //   .then(res => {
-  //     console.log('res: ' + JSON.stringify(res.data[0].items));
-  //     var data = JSON.stringify(res.data[0].items);
-  //     console.log(data);
-  //     this.setState({entries: data});
-  //     console.log('this.state.entries: ' + this.state.entries);
-  //   })
-  //   .catch(err => this.setState({entries: ['']}));
-  // }
+  componentWillMount = () => {
+    this.addTodoListService.retrieveEntries(this.props.user)
+    .then(result => {
+      this.setState({entries: result.items})
+    })
+    .catch(err => console.log(err))
+  }
 
   handleChange = (event) => {
     this.setState({value: event.target.value})
   }
 
   handleAdd = () => {
-
+    if(!this.state.value.length) return;
     const arr = this.state.entries.slice();
     arr.push(this.state.value);
     this.setState({entries: arr}, function(){
       this.addTodoListService.addEntry(this.props.user, arr);
-      //this.addTodoListService.saveTask(this.state.value);
     })
   }
 
@@ -60,7 +53,7 @@ class TodoList extends Component {
         <div className='row' key={index}>
           <li key={index} className='container-fluid'>
             <div className='col-md-4'>{elem}</div>
-            <span onClick={()=>this.handleDel(index)} className="btn btn-success col-md-offset-4">Done</span>
+            <span onClick={()=>this.handleDel(index)} className="btn btn-success col-md-offset-4">Delete</span>
           </li>
         </div>
       )
