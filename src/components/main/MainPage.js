@@ -5,6 +5,7 @@ import TodoList from '../utilities/TodoList';
 import Calendar from '../utilities/Calendar';
 import ConnectwithFriends from '../utilities/ConnectwithFriends';
 import Resource from '../resources/Resource';
+import PortalOffice from '../resources/PortalOffice/PortalOffice';
 import SelectionMenu from './SelectionMenu';
 import '../../assets/scss/_MainPage.scss';
 
@@ -14,7 +15,9 @@ class MainPage extends Component {
     todo: false,
     calendar: false,
     friends: false,
-    piazza: false
+    piazza: false,
+    portal: false,
+    filter: true
   }
 
   handleTodoClick = () => {
@@ -24,7 +27,12 @@ class MainPage extends Component {
     this.setState({calendar: !this.state.calendar});
   }
   handleSelectionChange = (id) => {
-    this.setState({piazza: !this.state.piazza});
+    this.setState({filter: !this.state.filter})
+    if(id === 'Piazza') {
+      this.setState({piazza: !this.state.piazza});
+    }else if (id === 'Portal') {
+      this.setState({portal: !this.state.portal});
+    }
   }
   handleFriendsClick = () => {
     this.setState({friends: !this.state.friends});
@@ -36,8 +44,9 @@ class MainPage extends Component {
         <MainNavBar />
         <MainToolBar handleFriendsClick={this.handleFriendsClick} handleTodoClick={this.handleTodoClick} handleCalendarClick={this.handleCalendarClick}/>
         <div className='col-md-6'>
-          {!this.state.piazza && <SelectionMenu handleChange={this.handleSelectionChange}/>}
+          {this.state.filter && <SelectionMenu handleChange={this.handleSelectionChange}/>}
           {this.state.piazza && <Resource api='piazza' user={this.props.location.state.user} password={this.props.location.state.password}/>}
+          {this.state.portal && <PortalOffice />}
         </div>
         {this.state.todo && <TodoList user={this.props.location.state.user} />}
         {this.state.friends && <ConnectwithFriends user={this.props.location.state.user} />}

@@ -5,6 +5,8 @@ import axios from 'axios';
 import UserInfoService from '../UserInfoService';
 import ToDoListService from '../ToDoListService';
 import ConnectwithFriendsService from '../ConnectwithFriendsService';
+import CalendarService from '../CalendarService';
+
 //import classNames from 'classnames';
 
 class SignUp extends Component {
@@ -22,6 +24,7 @@ class SignUp extends Component {
     this.addUserService = new UserInfoService();
     this.addTodoListService = new ToDoListService();
     this.addConnectwithFriendsService = new ConnectwithFriendsService();
+    this.CalendarService = new CalendarService();
   }
 
   checkUser = (user) => {
@@ -57,6 +60,7 @@ class SignUp extends Component {
       }else {
         this.addUserService.sendData(this.state.email, this.state.user, this.state.password);
         console.log('user data sent');
+        this.CalendarService.initialize(this.state.user);
         this.addTodoListService.initialize(this.state.user);
         this.addConnectwithFriendsService.initialize(this.state.user);
         console.log('todo list data sent');
