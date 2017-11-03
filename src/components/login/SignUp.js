@@ -4,7 +4,9 @@ import axios from 'axios';
 //import { Link } from 'react-router-dom';
 import UserInfoService from '../UserInfoService';
 import ToDoListService from '../ToDoListService';
+import ConnectwithFriendsService from '../ConnectwithFriendsService';
 import CalendarService from '../CalendarService';
+
 //import classNames from 'classnames';
 
 class SignUp extends Component {
@@ -23,6 +25,7 @@ class SignUp extends Component {
     super(props);
     this.addUserService = new UserInfoService();
     this.addTodoListService = new ToDoListService();
+    this.addConnectwithFriendsService = new ConnectwithFriendsService();
     this.CalendarService = new CalendarService();
   }
 
@@ -61,6 +64,7 @@ class SignUp extends Component {
         console.log('user data sent');
         this.CalendarService.initialize(this.state.user);
         this.addTodoListService.initialize(this.state.user);
+        this.addConnectwithFriendsService.initialize(this.state.user);
         console.log('todo list data sent');
         this.props.history.push('/login');
       }

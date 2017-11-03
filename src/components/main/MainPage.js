@@ -3,6 +3,7 @@ import MainNavBar from './MainNavBar';
 import MainToolBar from './MainToolBar';
 import TodoList from '../utilities/TodoList';
 import Calendar from '../utilities/Calendar';
+import ConnectwithFriends from '../utilities/ConnectwithFriends';
 import Resource from '../resources/Resource';
 import PortalOffice from '../resources/PortalOffice/PortalOffice';
 import SelectionMenu from './SelectionMenu';
@@ -14,6 +15,7 @@ class MainPage extends Component {
   state = {
     todo: false,
     calendar: false,
+    friends: false,
     piazza: false,
     portal: false,
     filter: true,
@@ -56,12 +58,15 @@ class MainPage extends Component {
       this.setState({portal: !this.state.portal});
     }
   }
+  handleFriendsClick = () => {
+    this.setState({friends: !this.state.friends});
+  }
 
   render() {
     return (
       <div className='main-page'>
         <MainNavBar />
-        <MainToolBar handleTodoClick={this.handleTodoClick} handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
+        <MainToolBar handleTodoClick={this.handleTodoClick} handleFriendsClick={this.handleFriendsClick} handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
         <div className='col-md-6'>
           {this.state.filter && <SelectionMenu handleChange={this.handleSelectionChange}/>
           }
@@ -69,6 +74,7 @@ class MainPage extends Component {
           {this.state.portal && <PortalOffice />}
         </div>
         {this.state.todo && <TodoList user={this.props.location.state.user} />}
+        {this.state.friends && <ConnectwithFriends user={this.props.location.state.user} />}
         {this.state.calendar && <Calendar user={this.props.location.state.user} />}
       </div>
     )
