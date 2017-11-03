@@ -31,14 +31,12 @@ class PiazzaService {
   }
 
   saveApi = (user, pass, apiList) => {
-    console.log(apiList);
     return axios.post('http://localhost:4200/UserInfos/save-api', {
       userID: user,
       userPassword: pass,
       apiLogin: apiList,
     })
     .then(res => {
-      console.log(res);
       console.log('API successfully saved');
     })
     .catch(err => {
@@ -46,8 +44,44 @@ class PiazzaService {
     })
   }
 
+  postQuestion = (title, content, user, pass, classID, obj) => {
+    console.log('IM A QUESTION');
+    return axios.post('http://localhost:4200/piazza/posts/question', {
+      title: title,
+      content: content,
+      username: user,
+      password: pass,
+      classID: classID,
+      postObj: obj,
+    })
+    .then(res => console.log('successfully posted'))
+    .catch(err => console.log(err))
+  }
+
+  postNote = (title, content, user, pass, classID, obj) => {
+    console.log('IM A NOTE');
+    return axios.post('http://localhost:4200/piazza/posts/note', {
+      title: title,
+      content: content,
+      username: user,
+      password: pass,
+      classID: classID,
+      postObj: obj,
+    })
+    .then(res => console.log('successfully posted'))
+    .catch(err => console.log(err))
+  }
+
+  postAnswer = (postObj, answer) => {
+    return axios.post('http://localhost:4200/piazza/posts/answer', {
+      postObj: postObj,
+      answer: answer,
+    })
+    .then(res => console.log('successfully posted'))
+    .catch(err => console.log(err))
+  }
+
   updateSchools = (user, pass, courseList) => {
-    console.log(courseList);
     axios.post('http://localhost:4200/piazza/save-schools', {
       userID: user,
       userPassword: pass,
@@ -67,7 +101,10 @@ class PiazzaService {
       currFolder: currFolder
 
     })
-    .then(res => res.data)
+    .then(res => {
+      console.log(res);
+      return res.data;
+    })
     .catch(err => console.log(err))
   }
 
