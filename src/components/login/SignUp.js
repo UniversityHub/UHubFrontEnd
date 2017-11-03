@@ -4,6 +4,7 @@ import axios from 'axios';
 //import { Link } from 'react-router-dom';
 import UserInfoService from '../UserInfoService';
 import ToDoListService from '../ToDoListService';
+import ConnectwithFriendsService from '../ConnectwithFriendsService';
 //import classNames from 'classnames';
 
 class SignUp extends Component {
@@ -20,6 +21,7 @@ class SignUp extends Component {
     super(props);
     this.addUserService = new UserInfoService();
     this.addTodoListService = new ToDoListService();
+    this.addConnectwithFriendsService = new ConnectwithFriendsService();
   }
 
   checkUser = (user) => {
@@ -56,6 +58,7 @@ class SignUp extends Component {
         this.addUserService.sendData(this.state.email, this.state.user, this.state.password);
         console.log('user data sent');
         this.addTodoListService.initialize(this.state.user);
+        this.addConnectwithFriendsService.initialize(this.state.user);
         console.log('todo list data sent');
         this.props.history.push('/login');
       }
