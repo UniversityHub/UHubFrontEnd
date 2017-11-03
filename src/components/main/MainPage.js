@@ -6,6 +6,7 @@ import Calendar from '../utilities/Calendar';
 import Resource from '../resources/Resource';
 import PortalOffice from '../resources/PortalOffice/PortalOffice';
 import SelectionMenu from './SelectionMenu';
+import UserInfoService from '../UserInfoService';
 import '../../assets/scss/_MainPage.scss';
 
 class MainPage extends Component {
@@ -15,7 +16,21 @@ class MainPage extends Component {
     calendar: false,
     piazza: false,
     portal: false,
-    filter: true
+    filter: true,
+    password: ''
+  }
+
+  constructor(props) {
+    super(props);
+    this.addUserService = new UserInfoService();
+  }
+
+  componentWillMount(){
+    this.addUserService.getPassword(this.props.location.state.user)
+      .then(result => {
+        this.setState({password: result.userPassword});
+      })
+      .catch(err => console.log(err));
   }
 
   handleTodoClick = () => {
@@ -24,6 +39,15 @@ class MainPage extends Component {
   handleCalendarClick = () => {
     this.setState({calendar: !this.state.calendar});
   }
+  handleSettingClick = () => {
+    this.props.history.push({
+      pathname: '/settings',
+      state: {
+        user: this.props.location.state.user,
+      },
+    });
+  }
+
   handleSelectionChange = (id) => {
     this.setState({filter: !this.state.filter})
     if(id === 'Piazza') {
@@ -37,10 +61,11 @@ class MainPage extends Component {
     return (
       <div className='main-page'>
         <MainNavBar />
-        <MainToolBar handleTodoClick={this.handleTodoClick} handleCalendarClick={this.handleCalendarClick}/>
+        <MainToolBar handleTodoClick={this.handleTodoClick} handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
         <div className='col-md-6'>
-          {this.state.filter && <SelectionMenu handleChange={this.handleSelectionChange}/>}
-          {this.state.piazza && <Resource api='piazza' user={this.props.location.state.user} password={this.props.location.state.password}/>}
+          {this.state.filter && <SelectionMenu handleChange={this.handleSelectionChange}/>
+          }
+          {this.state.piazza && <Resource api='piazza' user={this.props.location.state.user} password={this.state.password}/>}
           {this.state.portal && <PortalOffice />}
         </div>
         {this.state.todo && <TodoList user={this.props.location.state.user} />}

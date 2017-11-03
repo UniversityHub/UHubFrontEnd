@@ -10,7 +10,7 @@ class MainToolBar extends Component {
   render() {
     return (
       <div className="col-md-1 sidebar">
-        <button type="button" className="list-group-item row sidebar-item">
+        <button type="button" onClick={this.props.handleSettingClick} className="list-group-item row sidebar-item">
           <img alt='' src={home_icon} className='sidebar-item-icon'/>
         </button>
         <button type="button" onClick={this.props.handleCalendarClick} className="list-group-item row sidebar-item">

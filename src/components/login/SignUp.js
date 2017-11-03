@@ -13,6 +13,8 @@ class SignUp extends Component {
     user: '',
     email: '',
     password: '',
+    firstName: '',
+    lastName: '',
     passwordRepeat: '',
     submitted: false,
   }
@@ -55,7 +57,7 @@ class SignUp extends Component {
       if(res.data.length) {
         alert('Email already taken!');
       }else {
-        this.addUserService.sendData(this.state.email, this.state.user, this.state.password);
+        this.addUserService.sendData(this.state.email, this.state.user, this.state.password, this.state.firstName, this.state.lastName);
         console.log('user data sent');
         this.CalendarService.initialize(this.state.user);
         this.addTodoListService.initialize(this.state.user);
@@ -99,16 +101,15 @@ class SignUp extends Component {
     this.checkUser(this.state.user);
   }
 
-  // handleChange = (value, event) => {
-  //   this.setState({
-  //     [event.target.id]: value,
-  //   });
-  // }
-
   handleEmailChange = (event) => {
     this.setState({ email : event.target.value })
   }
-
+  handleFirstName = (event) => {
+    this.setState({ firstName : event.target.value })
+  }
+  handleLastName = (event) => {
+    this.setState({ lastName : event.target.value })
+  }
   handleUserChange = (event) => {
     this.setState({ user : event.target.value })
   }
@@ -144,6 +145,20 @@ class SignUp extends Component {
           <div className='row containter-fluid'>
             <div className='form-group col-md-6'>
               <label>
+                First Name
+              </label>
+              <input value={this.state.firstName} className="form-control" placeholder="First Name" onChange={this.handleFirstName}/>
+            </div>
+            <div className='form-group col-md-6'>
+              <label>
+                Last Name
+              </label>
+              <input value={this.state.lastName} className="form-control" placeholder="Last Name" onChange={this.handleLastName}/>
+            </div>
+          </div>
+          <div className='row containter-fluid'>
+            <div className='form-group col-md-6'>
+              <label>
                 Password
               </label>
               <input type='password' id='password' value={this.state.password} className="form-control" placeholder="Password" onChange={this.handlePasswordChange}/>
@@ -156,11 +171,9 @@ class SignUp extends Component {
             </div>
           </div>
           <div className='container-fluid row'>
-            {/* <Link to='/login'> */}
               <button className="btn btn-default col-md-12" >
                 Submit
               </button>
-            {/* </Link> */}
           </div>
         </form>
       </div>
