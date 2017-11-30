@@ -3,7 +3,7 @@
   position:relative;
 }
 .h_iframe {
-  display:block;
+  display: flex;
   width:100%;
   height:auto;
 }

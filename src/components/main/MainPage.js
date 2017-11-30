@@ -130,13 +130,17 @@ class MainPage extends Component {
         <div>
           <div className='row'>
             <div className='col-md-6'>
-              <SelectionMenu handleChange={this.handleSelectionChange} value={select[0]} id={0} />
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[0]} id={0} />
+              </div>
               <div className='container-fluid'>
                 {this.renderResource(0)}
               </div>
             </div>
             <div className='col-md-6'>
-              <SelectionMenu handleChange={this.handleSelectionChange} value={select[1]} id={1}/>
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[1]} id={1}/>
+              </div>
               <div className='container-fluid'>
                 {this.renderResource(1)}
               </div>
@@ -144,13 +148,17 @@ class MainPage extends Component {
           </div>
           <div className='row'>
             <div className='col-md-6'>
-              <SelectionMenu handleChange={this.handleSelectionChange} value={select[2]} id={2}/>
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[2]} id={2}/>
+              </div>
               <div className='container-fluid'>
                 {this.renderResource(2)}
               </div>
             </div>
             <div className='col-md-6'>
-              <SelectionMenu handleChange={this.handleSelectionChange} value={select[3]} id={3}/>
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[3]} id={3}/>
+              </div>
               <div className='container-fluid'>
                 {this.renderResource(3)}
               </div>

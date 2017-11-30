@@ -452,7 +452,8 @@ class Resource extends Component {
                         const mainContent = row.original.content;
                         const studentRes = !Object.is(postObj.studentResponse);
                         const instructorRes = !Object.is(postObj.instructorResponse);
-
+                        console.log('post Obj = ');
+                        console.log(postObj);
 
                         return (
                           <div>
@@ -462,7 +463,7 @@ class Resource extends Component {
                               </div>
                               <div className='panel-body' dangerouslySetInnerHTML={{__html: mainContent}}>
                               </div>
-                              {/* {postObj.type === 'question' && <PostAnswer postObj={postObj}/>} */}
+                              {postObj.type === 'question' && <PostAnswer postObj={postObj}/>}
                             </div>
 
 
