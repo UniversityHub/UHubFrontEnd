@@ -10,7 +10,10 @@ class ConnectwithFriends extends Component {
   state = {
     friends: [],
     allUsers: [],
-    friendModal: [false, '']
+    friendModal: [false, ''],
+    friendClasses: [],
+    userClasses: [],
+    commonClasses: [],
   }
 
   constructor(props) {
@@ -21,6 +24,11 @@ class ConnectwithFriends extends Component {
   }
 
   componentWillMount() {
+    if(this.state.friendModal[0]) {
+      console.log('mama i made it');
+      this.friendInfo(this.state.friendModal[1]);
+      this.compareClasses();
+    }
     this.addConnectwithFriendsService.getFriends(this.props.user)
       .then(result => {
         this.setState({friends: result})
@@ -28,27 +36,50 @@ class ConnectwithFriends extends Component {
       .catch(err => console.log(err))
     this.addConnectwithFriendsService.getAllUsers()
       .then(result => {
-        console.log(result);
         let arr = result.filter((elem, index) => {
           return elem.userID !== this.props.user
         })
         let final = arr.map((elem, index) => {
           return elem.userID;
         })
-        //console.log(final);
         this.setState({allUsers: final});
       })
       .catch(err => console.log(err));
+    this.UserInfoService.getUser(this.props.user)
+    .then(user => {
+      const apiList = user.apiLogin;
+      const apiObj = apiList.find(elem => {
+        return elem.name === 'piazza';
+      })
+      if(typeof apiObj !== 'object') {
+        return;
+      }else {
+        this.PiazzaService.login(apiObj.user, apiObj.pass)
+        .then(piazzaFriend => {
+          const classes = piazzaFriend.classes;
+          const activeClasses = classes.filter(elem => {
+            return elem.status === 'active';
+          })
+          const classNames = activeClasses.map(elem => {
+            return elem.name;
+          })
+          this.setState({userClasses: classNames});
+        })
+      }
+    })
   }
 
   handleCloseModal = () => {
     const arr = [false, ''];
-    this.setState({friendModal: arr});
+    this.setState({
+      friendModal: arr,
+      commonClasses: [],
+      friendClasses: []
+    });
   }
 
   //CONNECT TO USER
   handleConnect = (index) => {
-    console.log("Trying to connect");
     const { allUsers, friends } = this.state;
     const friend = allUsers[index];
     let friendArr = friends.slice();
@@ -63,7 +94,74 @@ class ConnectwithFriends extends Component {
     const modalArr = this.state.friendModal.slice();
     modalArr[0] = true;
     modalArr[1] = this.state.friends[index];
+    this.friendInfo(modalArr[1]);
+    //this.compareClasses();
     this.setState({friendModal: modalArr})
+  }
+
+
+
+  friendInfo = (friend) => {
+    this.UserInfoService.getUser(friend)
+    .then(user => {
+      const apiList = user.apiLogin;
+      const apiObj = apiList.find(elem => {
+        return elem.name === 'piazza';
+      })
+      if(typeof apiObj !== 'object') {
+        return;
+      }else {
+        this.PiazzaService.login(apiObj.user, apiObj.pass)
+        .then(piazzaFriend => {
+          const classes = piazzaFriend.classes;
+          const activeClasses = classes.filter(elem => {
+            return elem.status === 'active';
+          })
+          const classNames = activeClasses.map(elem => {
+            return elem.name;
+          })
+          this.setState({friendClasses: classNames});
+          this.compareClasses(classNames)
+        })
+      }
+    })
+    //this.compareClasses();
+  }
+
+  compareClasses = (friendClasses) => {
+    const { userClasses/*, friendClasses*/} = this.state;
+    //console.log(userClasses);
+    //console.log(friendClasses);
+    let newArr = userClasses.filter(elem => {
+      return friendClasses.indexOf(elem) >= 0;
+    })
+    newArr.concat(friendClasses.filter(elem => {
+      return newArr.indexOf(elem) >=0;
+    }))
+    //console.log(newArr);
+    this.setState({commonClasses: newArr})
+  }
+
+  displayCommonClasses = () => {
+    if(!this.state.commonClasses.length) {
+      return (
+        <div>
+          <li className="list-group-item disabled">
+            NO CLASSES
+          </li>
+        </div>
+      )
+    }
+    return this.state.friendClasses.map((elem, index) => {
+      let bool = false;
+      if(this.state.userClasses.includes(elem)) bool = true;
+      return (
+        <li className='list-group-item' key={index}>
+          {elem}
+          {bool && <span className="badge">In Common</span>}
+        </li>
+      )
+    })
   }
 
   displayFriends = () => {
@@ -101,28 +199,9 @@ class ConnectwithFriends extends Component {
     });
   }
 
-  friendInfo = (friend) => {
-    return this.UserInfoService.getUser(friend)
-    .then(user => {
-      console.log('friend Info:');
-      console.log(user);
-      const apiList = user.apiLogin;
-      const apiObj = apiList.find(elem => {
-        return elem.name === 'piazza';
-      })
-      console.log('friend api object: ')
-      console.log(apiObj);
-      //console.log(typeof apiObj === 'object');
-      if(typeof apiObj !== 'object') {
-        return (<h3>No Similar Classes</h3>)
-      }
-    })
-
-  }
-
   render() {
     console.log(this.state);
-    const { friends, allUsers, friendModal } = this.state;
+    const { friends, allUsers, friendModal, commonClasses } = this.state;
     return (
       <div className='col-md-4'>
 
@@ -147,7 +226,15 @@ class ConnectwithFriends extends Component {
         <Modal open={friendModal[0]} onClose={this.handleCloseModal} little>
           <h1>{friendModal[1]}</h1>
           <hr />
-          {friendModal[0] && this.friendInfo(friendModal[1])}
+          {/* {friendModal[0] && this.compareClasses()} */}
+          {friendModal[0] &&
+            <div>
+              <h2>Classes: </h2>
+              <ul className='list-group container'>
+                {this.displayCommonClasses()}
+              </ul>
+            </div>
+          }
         </Modal>
       </div>
 

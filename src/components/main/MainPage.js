@@ -100,6 +100,13 @@ class MainPage extends Component {
           </div>
         )
         break;
+      case 'Blackboard':
+      return (
+        <div className='h_iframe'>
+          <iframe src="https://mycourses.purdue.edu/" width="640" height="480" />
+        </div>
+      )
+      break;
     }
   }
 
