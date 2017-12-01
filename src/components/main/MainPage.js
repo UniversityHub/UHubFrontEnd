@@ -4,6 +4,7 @@ import MainToolBar from './MainToolBar';
 import TodoList from '../utilities/TodoList';
 import Calendar from '../utilities/Calendar';
 import ConnectwithFriends from '../utilities/ConnectwithFriends';
+import StudyGroups from '../utilities/StudyGroups';
 import Resource from '../resources/Resource';
 import PortalOffice from '../resources/PortalOffice/PortalOffice';
 import SelectionMenu from './SelectionMenu';
@@ -18,6 +19,7 @@ class MainPage extends Component {
     calendar: false,
     friends: false,
     filter: true,
+    groups: false,
     password: '',
     selectOne: '',
     selectTwo: '',
@@ -113,6 +115,9 @@ class MainPage extends Component {
   handleFriendsClick = () => {
     this.setState({friends: !this.state.friends});
   }
+  handleGroupsClick = () => {
+    this.setState({groups: !this.state.groups});
+  }
 
   // selectionMenu = () => {
   //   return (
@@ -129,11 +134,14 @@ class MainPage extends Component {
 
   render() {
     console.log(this.state)
-    const { todo, friends, calendar, select } = this.state;
+    const { todo, friends, calendar, select, groups } = this.state;
     return (
       <div className='main-page'>
         <MainNavBar
-          handleTodoClick={this.handleTodoClick} handleFriendsClick={this.handleFriendsClick} handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
+          handleGroupsClick={this.handleGroupsClick}
+          handleTodoClick={this.handleTodoClick}
+          handleFriendsClick={this.handleFriendsClick}
+          handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
         <div>
           <div className='row'>
             <div className='col-md-6 subdivision'>
@@ -173,6 +181,7 @@ class MainPage extends Component {
           </div>
           {todo && <TodoList user={this.props.location.state.user} />}
           {friends && <ConnectwithFriends user={this.props.location.state.user} />}
+          {groups && <StudyGroups user={this.props.location.state.user} />}
           {calendar && <Calendar user={this.props.location.state.user} />}
         </div>
       </div>

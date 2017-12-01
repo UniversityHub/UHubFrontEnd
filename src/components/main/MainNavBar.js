@@ -6,6 +6,8 @@ import friends_icon from '../../assets/svg/SideBarIcons_White/friends_icon.svg';
 import messaging_icon from '../../assets/svg/SideBarIcons_White/messaging_icon.svg';
 import profile_icon from '../../assets/svg/SideBarIcons_White/profile_icon.svg';
 import home_icon from '../../assets/svg/SideBarIcons_White/home_icon.svg';
+import groups_icon from '../../assets/svg/SideBarIcons_White/groups_icon.svg';
+
 
 class MainNavBar extends Component {
   render() {
@@ -33,14 +35,19 @@ class MainNavBar extends Component {
                   <img alt='' src={profile_icon} className='sidebar-item-icon'/>
                 </button>
               </li>
-              <li>
+              {/* <li>
                 <button type="button" className="sidebar-item">
                   <img alt='' src={messaging_icon} className='sidebar-item-icon'/>
                 </button>
-              </li>
+              </li> */}
               <li>
                 <button type="button" onClick={this.props.handleFriendsClick} className="sidebar-item">
                   <img alt='' src={friends_icon} className='sidebar-item-icon'/>
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={this.props.handleGroupsClick} className="list-group-item row sidebar-item">
+                  <img alt='' src={groups_icon} className='sidebar-item-icon'/>
                 </button>
               </li>
             </ul>

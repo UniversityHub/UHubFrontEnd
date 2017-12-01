@@ -230,7 +230,7 @@ class ConnectwithFriends extends Component {
           {friendModal[0] &&
             <div>
               <h2>Classes: </h2>
-              <ul className='list-group container'>
+              <ul className='list-group container-fluid'>
                 {this.displayCommonClasses()}
               </ul>
             </div>
