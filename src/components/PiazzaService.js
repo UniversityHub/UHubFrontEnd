@@ -9,7 +9,6 @@ class PiazzaService {
       userPassword: pass,
     })
     .then(res => {
-      console.log(res);
       data = Promise.resolve((res));
       return data.then(res => res.data)
     })
@@ -99,7 +98,6 @@ class PiazzaService {
       userPassword: pass,
       currClass: currClass,
       currFolder: currFolder
-
     })
     .then(res => {
       console.log(res);
