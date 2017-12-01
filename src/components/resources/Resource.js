@@ -488,8 +488,11 @@ class Resource extends Component {
                           </div>
                         )
                       }}
-                      style={{height: "400px"}}
+                      style={{
+                        height: "400px"
+                      }}
                       className="-striped -highlight"
+
                     />
                   }
                 </div>

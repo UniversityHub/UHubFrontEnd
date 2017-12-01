@@ -32,10 +32,11 @@ class FriendService {
     .catch(err => console.log(err))
   }
 
-  addFriend = (user, friends) => {
+  addFriend = (user, friends, friend) => {
     axios.post('http://localhost:4200/connect/add-friend', {
       userID: user,
       friends: friends,
+      friend: friend    
     })
     .then(res => {
       console.log('entry successfully added');

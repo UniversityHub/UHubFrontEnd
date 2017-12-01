@@ -41,7 +41,7 @@ class ConnectwithFriends extends Component {
     let friendArr = friends.slice();
     friendArr.push(friend);
 
-    this.addConnectwithFriendsService.addFriend(this.props.user, friendArr);
+    this.addConnectwithFriendsService.addFriend(this.props.user, friendArr, friend);
     this.setState({friends: friendArr});
   }
 
@@ -49,14 +49,16 @@ class ConnectwithFriends extends Component {
     if(!this.state.friends.length) {
       return (
         <div>
-          <li className="list-group-item disabled">NO FRIENDS
+          <li className="list-group-item disabled">
+            NO FRIENDS
           </li>
         </div>
       )
     }
     return this.state.friends.map((elem, index) => {
       return (
-         <li className="list-group-item" key={index}>{elem}
+         <li className="list-group-item" key={index}>
+           {elem}
            <span className="badge">Connected</span>
          </li>
       )
