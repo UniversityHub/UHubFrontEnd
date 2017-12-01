@@ -1,45 +1,65 @@
 import React, { Component } from 'react';
+import '../../assets/scss/_MainToolBar.css';
+import calendar_icon from '../../assets/svg/SideBarIcons_White/calendar_icon.svg';
+import friends_icon from '../../assets/svg/SideBarIcons_White/friends_icon.svg';
+import messaging_icon from '../../assets/svg/SideBarIcons_White/messaging_icon.svg';
+import profile_icon from '../../assets/svg/SideBarIcons_White/profile_icon.svg';
+import home_icon from '../../assets/svg/SideBarIcons_White/home_icon.svg';
 
 class MainNavBar extends Component {
   render() {
     return (
       <div>
         <nav className="navbar navbar-default main-nav-bar col-md-12">
-          <div className="container-fluid">
+          <div className="container-fluid row">
             <div className="navbar-header">
               <a className="navbar-brand" href="">UHub</a>
             </div>
             <ul className="nav navbar-nav">
-              <li className="active"><a href="">Home</a></li>
-              <li><a href="">Page 1</a></li>
-              <li><a href="">Page 2</a></li>
+              <li>
+                <button type="button" onClick={this.props.handleSettingClick} className="list-group-item row sidebar-item">
+                  <img alt='' src={home_icon} className='sidebar-item-icon'/>
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={this.props.handleCalendarClick} className="list-group-item row sidebar-item">
+                  <img alt='' src={calendar_icon} className='sidebar-item-icon'/>
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={this.props.handleTodoClick} className="list-group-item row sidebar-item">
+                  <img alt='' src={profile_icon} className='sidebar-item-icon'/>
+                </button>
+              </li>
+              <li>
+                <button type="button" className="list-group-item row sidebar-item">
+                  <img alt='' src={messaging_icon} className='sidebar-item-icon'/>
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={this.props.handleFriendsClick} className="list-group-item row sidebar-item">
+                  <img alt='' src={friends_icon} className='sidebar-item-icon'/>
+                </button>
+              </li>
             </ul>
-            <form className='navbar-form navbar-left'>
-              <div className="input-group">
-                <input type="text" className="form-control" placeholder="Search" />
-                <div className="input-group-btn">
-                  <button className="btn btn-default" type="submit">
-                    <i className="glyphicon glyphicon-search"></i>
-                  </button>
-                </div>
-              </div>
-            </form>
+            {/* <button type="button" onClick={this.props.handleSettingClick} className="list-group-item row sidebar-item">
+              <img alt='' src={home_icon} className='sidebar-item-icon'/>
+            </button>
+            <button type="button" onClick={this.props.handleSettingClick} className="list-group-item row sidebar-item">
+              <img alt='' src={home_icon} className='sidebar-item-icon'/>
+            </button>
+            <button type="button" onClick={this.props.handleTodoClick} className="list-group-item row sidebar-item">
+              <img alt='' src={profile_icon} className='sidebar-item-icon'/>
+            </button>
+            <button type="button" className="list-group-item row sidebar-item">
+              <img alt='' src={messaging_icon} className='sidebar-item-icon'/>
+            </button>
+            <button type="button" onClick={this.props.handleFriendsClick} className="list-group-item row sidebar-item">
+              <img alt='' src={friends_icon} className='sidebar-item-icon'/>
+            </button> */}
             <div className='navbar-right row' style={{height: '100%'}}>
               <div className='col-md-6'>
-                <h5>Hello, Christian!</h5>
-              </div>
-              <div className='dropdown'>
-                <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                  Settings
-                  <span className="caret"></span>
-                </button>
-                <ul className="dropdown-menu">
-                  <li><a href="">Action</a></li>
-                  <li><a href="">Another action</a></li>
-                  <li><a href="">Something else here</a></li>
-                  <li className="divider"></li>
-                  <li><a href="">Separated link</a></li>
-                </ul>
+                <h5>Hello!</h5>
               </div>
             </div>
           </div>

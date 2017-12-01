@@ -8,6 +8,7 @@ import Resource from '../resources/Resource';
 import PortalOffice from '../resources/PortalOffice/PortalOffice';
 import SelectionMenu from './SelectionMenu';
 import UserInfoService from '../UserInfoService';
+import './MainPage.css'
 import '../../assets/scss/_MainPage.scss';
 
 class MainPage extends Component {
@@ -16,10 +17,13 @@ class MainPage extends Component {
     todo: false,
     calendar: false,
     friends: false,
-    piazza: false,
-    portal: false,
     filter: true,
-    password: ''
+    password: '',
+    selectOne: '',
+    selectTwo: '',
+    selectThree: '',
+    selectFour: '',
+    select: ['None', 'None', 'None', 'None'],
   }
 
   constructor(props) {
@@ -28,7 +32,7 @@ class MainPage extends Component {
   }
 
   componentWillMount(){
-    this.addUserService.getPassword(this.props.location.state.user)
+    this.addUserService.getUser(this.props.location.state.user)
       .then(result => {
         this.setState({password: result.userPassword});
       })
@@ -50,32 +54,120 @@ class MainPage extends Component {
     });
   }
 
-  handleSelectionChange = (id) => {
-    this.setState({filter: !this.state.filter})
-    if(id === 'Piazza') {
-      this.setState({piazza: !this.state.piazza});
-    }else if (id === 'Portal') {
-      this.setState({portal: !this.state.portal});
+  searchPorts = (id, type) => {
+    if(type === 'None') return -1;
+    const index = this.state.select.indexOf(type);
+    if(index === id) return -1;
+    return index;
+  }
+
+  handleSelectionChange = (id, type) => {
+    const validate = this.searchPorts(id, type);
+
+
+    let selectArr = this.state.select.slice();
+    if(validate > 3) {
+      if(type === 'None') {
+        selectArr[id] = '';
+      }else {
+        selectArr[id] = type;
+      }
+    }else {
+      selectArr[validate] = selectArr[id];
+      selectArr[id] = type;
+    }
+    this.setState({select: selectArr});
+    return;
+  }
+
+  renderResource = (id) => {
+    const type = this.state.select[id];
+
+    switch (type) {
+      case 'None':
+        return;
+        break;
+      case 'Piazza':
+        return <Resource api='piazza' user={this.props.location.state.user} password={this.state.password}/>
+        break;
+      case 'Portal':
+        return <PortalOffice />
+        break;
+      case 'Transportation':
+        return (
+          <div className='h_iframe'>
+            <iframe src="http://citybus.doublemap.com/map/" width="640" height="480" />
+          </div>
+        )
+        break;
     }
   }
+
   handleFriendsClick = () => {
     this.setState({friends: !this.state.friends});
   }
 
+  // selectionMenu = () => {
+  //   return (
+  //     <div className='row'>
+  //       <div className='col-md-6'>
+  //         <SelectionMenu handleChange={this.handleSelectionChange}/>
+  //       </div>
+  //       <div className='col-md-6'>
+  //         <SelectionMenu handleChange={this.handleSelectionChange}/>
+  //       </div>
+  //     </div>
+  //   )
+  // }
+
   render() {
+    console.log(this.state)
+    const { todo, friends, calendar, select } = this.state;
     return (
       <div className='main-page'>
-        <MainNavBar />
-        <MainToolBar handleTodoClick={this.handleTodoClick} handleFriendsClick={this.handleFriendsClick} handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
-        <div className='col-md-6'>
-          {this.state.filter && <SelectionMenu handleChange={this.handleSelectionChange}/>
-          }
-          {this.state.piazza && <Resource api='piazza' user={this.props.location.state.user} password={this.state.password}/>}
-          {this.state.portal && <PortalOffice />}
+        <MainNavBar
+          handleTodoClick={this.handleTodoClick} handleFriendsClick={this.handleFriendsClick} handleSettingClick={this.handleSettingClick} handleCalendarClick={this.handleCalendarClick}/>
+        <div>
+          <div className='row'>
+            <div className='col-md-6'>
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[0]} id={0} />
+              </div>
+              <div className='container-fluid'>
+                {this.renderResource(0)}
+              </div>
+            </div>
+            <div className='col-md-6'>
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[1]} id={1}/>
+              </div>
+              <div className='container-fluid'>
+                {this.renderResource(1)}
+              </div>
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col-md-6'>
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[2]} id={2}/>
+              </div>
+              <div className='container-fluid'>
+                {this.renderResource(2)}
+              </div>
+            </div>
+            <div className='col-md-6'>
+              <div>
+                <SelectionMenu handleChange={this.handleSelectionChange} value={select[3]} id={3}/>
+              </div>
+              <div className='container-fluid'>
+                {this.renderResource(3)}
+              </div>
+            </div>
+          </div>
+          {todo && <TodoList user={this.props.location.state.user} />}
+          {friends && <ConnectwithFriends user={this.props.location.state.user} />}
+          {calendar && <Calendar user={this.props.location.state.user} />}
         </div>
-        {this.state.todo && <TodoList user={this.props.location.state.user} />}
-        {this.state.friends && <ConnectwithFriends user={this.props.location.state.user} />}
-        {this.state.calendar && <Calendar user={this.props.location.state.user} />}
       </div>
     )
   }

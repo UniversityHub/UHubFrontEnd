@@ -38,6 +38,18 @@ class ToDoItemService {
     .catch(err => console.log(err))
   }
 
+  //Retrieve events to update Calendar
+  retrieveEntries = (user) => {
+    return axios.post('http://localhost:4200/todoList/entries', {
+      userID: user
+    })
+    .then(res => {
+      console.log(res.data[0]);
+      return res.data[0];
+    })
+    .catch(err => console.log(err))
+  }
+
   /*saveTask = (entry) => {
     axios.post('http://localhost:4200/todoList/saveTask', {
       //userID: user,

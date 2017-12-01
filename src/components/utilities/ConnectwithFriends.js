@@ -4,10 +4,8 @@ import ConnectwithFriendsService from '../ConnectwithFriendsService';
 
 class ConnectwithFriends extends Component {
   state = {
-    value: '',
-    entries: [],
-    objEntries: [],
-    numOfEntries: 0,
+    friends: [],
+    allUsers: [],
   }
 
   constructor(props) {
@@ -15,61 +13,92 @@ class ConnectwithFriends extends Component {
     this.addConnectwithFriendsService = new ConnectwithFriendsService();
   }
 
-
-  handleChange = (event) => {
-    this.setState({value: event.target.value})
+  componentWillMount() {
+    this.addConnectwithFriendsService.getFriends(this.props.user)
+      .then(result => {
+        this.setState({friends: result})
+      })
+      .catch(err => console.log(err))
+    this.addConnectwithFriendsService.getAllUsers()
+      .then(result => {
+        console.log(result);
+        let arr = result.filter((elem, index) => {
+          return elem.userID !== this.props.user
+        })
+        let final = arr.map((elem, index) => {
+          return elem.userID;
+        })
+        console.log(final);
+        this.setState({allUsers: final});
+      })
+      .catch(err => console.log(err));
   }
 
-  handleAdd = () => {
-    const arr = this.state.entries.slice();
-    arr.push(this.state.value);
-    this.setState({entries: arr}, function(){
-      this.addConnectwithFriendsService.addFriend(this.props.user, arr);
-    })
-  }
-  handleGetUserID = () => {
-    const arr = this.state.entries.slice();
-    arr.push(this.state.value);
-    this.setState({entries: arr}, function(){
-      this.addConnectwithFriendsService.getUserID(this.props.user, arr);
-    })
+  handleConnect = (index) => {
+    console.log("Trying to connect");
+    const { allUsers, friends } = this.state;
+    const friend = allUsers[index];
+    let friendArr = friends.slice();
+    friendArr.push(friend);
+
+    this.addConnectwithFriendsService.addFriend(this.props.user, friendArr);
+    this.setState({friends: friendArr});
   }
 
-
-  displayListData = () => {
-    return this.state.entries.map((elem,index) => {
+  displayFriends = () => {
+    if(!this.state.friends.length) {
       return (
-        <div className='row' key={index}>
-          <li key={index} className='container-fluid'>
-            <div className='col-md-4'>{elem}</div>
+        <div>
+          <li className="list-group-item disabled">NO FRIENDS
           </li>
         </div>
       )
-    })
+    }
+    return this.state.friends.map((elem, index) => {
+      return (
+         <li className="list-group-item" key={index}>{elem}
+           <span className="badge">Connected</span>
+         </li>
+      )
+    });
+
+  }
+
+  displayAllUsers = () => {
+    console.log(this.state.allUsers)
+    return this.state.allUsers.map((elem, index) => {
+      const bool = this.state.friends.includes(elem);
+      return (
+        <li className="list-group-item" key={index}>
+           {elem}
+           {bool && <span className="badge">Connected</span>}
+           {!bool && <span className="badge" onClick={()=>this.handleConnect(index)}>Connect</span>}
+         </li>
+      )
+    });
   }
 
   render() {
-    console.log('I make it here');
     return (
       <div className='col-md-4'>
-        <div id="myDIV" className="header">
-          <h2>My Friends</h2>
-            <table>
-              <tr>
-                <th>Username</th>
-              </tr>
-              <tr>
-                <td>John</td>
-              </tr>
-              <tr>
-                <td>Jane</td>
-              </tr>
-              <span onClick={this.handleGetUserID} className="addBtn">Add</span>
-              </table>
-        </div>
-        <ul id="myUL">
-          {this.displayListData()}
+
+        <ul className="nav nav-tabs">
+          <li className="active"><a data-toggle="tab" href="#allUsers">All Users</a></li>
+          <li><a data-toggle="tab" href="#friends">Friends</a></li>
         </ul>
+
+        <div className="tab-content">
+          <div id="allUsers" className="tab-pane fade in active">
+            <ul className="list-group">
+              {this.displayAllUsers()}
+            </ul>
+          </div>
+          <div id="friends" className="tab-pane fade">
+            <ul className="list-group">
+              {this.displayFriends()}
+            </ul>
+          </div>
+        </div>
       </div>
 
     )

@@ -87,6 +87,13 @@ class Calendar extends Component {
   handleAddEventAllDay = () => {
     this.setState({addEventAllDay: !this.state.addEventAllDay});
   }
+  handleBackEvent = () => {
+    this.setState({
+      addEvent: !this.state.addEvent,
+      addEventStart: moment(),
+      addEventEnd: moment()
+    })
+  }
   handleSubmitEvent = () => {
     const { addEvent, addEventTitle, addEventStart, addEventEnd } = this.state;
 
@@ -137,7 +144,7 @@ class Calendar extends Component {
             <div className="col-md-offset-2 col-md-10">
               <div className="checkbox">
                 <label>
-                  <input type="checkbox" onChange={this.handleAddEventAllDay}/> Remember me
+                  <input type="checkbox" onChange={this.handleAddEventAllDay}/> AllDay Event
                 </label>
               </div>
             </div>
@@ -168,8 +175,11 @@ class Calendar extends Component {
                 />
             </div>
             <div className='container-fluid row'>
-                <button type="submit" className="btn btn-success btn-block" onClick={this.handleSubmitEvent}>
+                <button type="submit" className="btn btn-success btn-block col-md-5" onClick={this.handleSubmitEvent}>
                   Submit Event
+                </button>
+                <button type="submit" className="btn btn-primary btn-block col-md-5" onClick={this.handleBackEvent}>
+                  Back
                 </button>
             </div>
           </div>
